@@ -1,0 +1,3 @@
+[submodule "love2d-console"]
+	path = love2d-console
+	url = https://github.com/rinqu-eu/love2d-console

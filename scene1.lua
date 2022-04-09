@@ -9,7 +9,10 @@ local scene = {
     pieces = {
         A = {
             image = "strong_mushroom.png",
-            hp = 50,
+            portrait_img = "unit_portrait.png",
+            name = "A Mushroom",
+            desc = "Place holder mushroom A",
+            max_hp = 50,
             atk = 9,
             def = 0
         }
