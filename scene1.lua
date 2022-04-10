@@ -14,7 +14,9 @@ local scene = {
             desc = "Place holder mushroom A",
             max_hp = 50,
             atk = 9,
-            def = 0
+            def = 0,
+            atk_cd = 3.5,
+            move_cd = 2.5,
         }
     },
     initial_pieces = {

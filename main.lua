@@ -100,7 +100,13 @@ function update_next_action_list()
     for i = 0, board.tiles_x - 1 do
         for j = 0, board.tiles_y - 1 do
             if not is_cell_empty(i, j) then
-                table.insert(list, {x = i, y = j, cooldown = get_cell_cooldown(i, j)})
+                local cd = get_cell_cooldown(i, j)
+                cd = cd - love.timer.getDelta()
+                if cd < 0 then
+                    cd = 0
+                end
+                board.state[i + 1][j + 1].cooldown = cd
+                table.insert(list, {x = i, y = j, cooldown = cd})
             end
         end
     end
@@ -115,6 +121,35 @@ end
 
 function get_cell_hp(i, j)
     return board.state[i + 1][j + 1].hp
+end
+
+function get_cell_def(i, j)
+    return pieces[get_cell_type(i, j)].def
+end
+
+function get_cell_atk(i, j)
+    return pieces[get_cell_type(i, j)].atk
+end
+
+function kill_cell(i, j)
+    if pieces[get_cell_type(i, j)].death_effect then
+        pieces[get_cell_type(i, j)].death_effect(board, i, j)
+    end
+    board.state[i + 1][j + 1] = {}
+end
+
+function attack_cell(i, j, dmg)
+    local hp = get_cell_hp(i, j)
+    local dmg_comp = dmg - get_cell_def(i, j)
+    if dmg > 0 and dmg_comp < 1 then
+        dmg_comp = 1
+    end
+    hp = hp - dmg_comp
+    if hp <= 0 then
+        kill_cell(i, j)
+    else
+        board.state[i + 1][j + 1].hp = hp
+    end
 end
 
 function get_cell_team(i, j)
@@ -145,16 +180,45 @@ end
 
 function love.mousepressed(x, y, button)
     if button == 1 then
-        if is_cell_empty(cursor.selected.x, cursor.selected.y) then
-            pickedup = {}
+        if is_pickedup() then
+            if action(pickedup.coord.x, pickedup.coord.y, cursor.selected.x, cursor.selected.y) then
+                pickedup = {}
+            end
         else
-            pickedup.coord = {
-                x = cursor.selected.x,
-                y = cursor.selected.y
-            }
+            if is_cell_empty(cursor.selected.x, cursor.selected.y) then
+                pickedup = {}
+            elseif get_cell_cooldown(cursor.selected.x, cursor.selected.y) <= 0 then
+                pickedup.coord = {
+                    x = cursor.selected.x,
+                    y = cursor.selected.y
+                }
+            end
         end
     end
-end 
+end
+
+-- Action
+function action(from_x, from_y, to_x, to_y)
+    if not is_cell_empty(from_x, from_y) then
+        local pawn = board.state[from_x + 1][from_y + 1]
+        if is_cell_empty(to_x, to_y) then
+            -- Move
+            pawn.cooldown = pieces[pawn.type].move_cd
+            pawn.last_cooldown = pieces[pawn.type].move_cd
+            board.state[from_x + 1][from_y + 1] = {}
+            board.state[to_x + 1][to_y + 1] = pawn
+            return true
+        else
+            -- Attack
+            attack_cell(to_x, to_y, get_cell_atk(from_x, from_y))
+            board.state[from_x + 1][from_y + 1].cooldown = pieces[pawn.type].atk_cd
+            board.state[from_x + 1][from_y + 1].last_cooldown = pieces[pawn.type].atk_cd
+            return true
+        end
+    end
+
+    return false
+end
 
 -- Draw the circular cursor on the window
 function draw_cursor()
@@ -172,44 +236,58 @@ function draw_background()
 end
 
 -- Draw the board
+function draw_unit(base_x, base_y, shade, prog, p)
+    if p.type then
+        if p.team == 'friendly' then
+            set_color_blue(shade)
+            love.graphics.rectangle(
+                'fill',
+                base_x,
+                base_y,
+                board.tile_size,
+                board.tile_size)
+        else
+            set_color_red(shade)
+            love.graphics.rectangle(
+                'fill',
+                base_x,
+                base_y,
+                board.tile_size,
+                board.tile_size)
+        end
+        set_color_white(4)
+        local prog_l = (board.tile_size - 2) * prog
+        love.graphics.rectangle(
+                'fill',
+                base_x + board.tile_size - 1,
+                base_y + 1,
+                -prog_l,
+                board.tile_size - 2)
+        love.graphics.draw(
+            pieces[p.type].image,
+            base_x,
+            base_y)
+    else
+        set_color_white(shade)
+        love.graphics.rectangle(
+            'fill',
+            base_x,
+            base_y,
+            board.tile_size,
+            board.tile_size)
+    end
+end
+
 function draw_board()
     -- set_color_white(0)
     -- love.graphics.rectangle('fill', board.base_x, board.base_y, board.tile_size * board.tiles_x, board.tile_size * board.tiles_y)
     
     for i, column in ipairs(board.state) do
         for j, p in ipairs(column) do
-            if p.type then
-                if p.team == 'friendly' then
-                    set_color_blue((i + j) % 2 + 3)
-                    love.graphics.rectangle(
-                        'fill',
-                        board.base_x + board.tile_size * (i - 1),
-                        board.base_y + board.tile_size * (j - 1),
-                        board.tile_size,
-                        board.tile_size)
-                else
-                    set_color_red((i + j) % 2 + 3)
-                    love.graphics.rectangle(
-                        'fill',
-                        board.base_x + board.tile_size * (i - 1),
-                        board.base_y + board.tile_size * (j - 1),
-                        board.tile_size,
-                        board.tile_size)
-                end
-                set_color_white(4)
-                love.graphics.draw(
-                    pieces[p.type].image,
-                    board.base_x + board.tile_size * (i - 1),
-                    board.base_y + board.tile_size * (j - 1))
-            else
-                set_color_white((i + j) % 2 + 3)
-                love.graphics.rectangle(
-                    'fill',
-                    board.base_x + board.tile_size * (i - 1),
-                    board.base_y + board.tile_size * (j - 1),
-                    board.tile_size,
-                    board.tile_size)
-            end
+            local base_x = board.base_x + board.tile_size * (i - 1)
+            local base_y = board.base_y + board.tile_size * (j - 1)
+            local shade = (i + j) % 2 + 3
+            draw_unit(base_x, base_y, shade, 0, p)
         end
     end
 
@@ -222,6 +300,22 @@ function draw_board()
                 board.base_x + board.tile_size * cursor.selected.x,
                 board.base_y + board.tile_size * cursor.selected.y)
         end
+    end
+end
+
+-- Draw next action list
+function draw_next_action_list()
+    for i, a in ipairs(next_action_list) do
+        local x = a.x
+        local y = a.y
+        local p = board.state[x + 1][y + 1]
+        local shade = 4
+        if p.cooldown <= 0 then
+            if math.sin(love.timer.getTime() * 8) > 0 then
+                shade = 2
+            end 
+        end
+        draw_unit(5 + (i - 1) * board.tile_size, 195, shade, p.cooldown / p.last_cooldown, p)
     end
 end
 
@@ -281,6 +375,7 @@ end
 function draw_scene()
     draw_background()
     draw_board()
+    draw_next_action_list()
     draw_board_cursor()
     draw_unit_details()
 end
@@ -312,7 +407,8 @@ function load_scene(theme_file)
             type = p.type,
             team = 'friendly',
             hp = pieces[p.type].max_hp,
-            cooldown = 0
+            cooldown = 0,
+            last_cooldown = 1
         }
     end
 
@@ -321,7 +417,8 @@ function load_scene(theme_file)
             type = p.type,
             team = 'enemy',
             hp = pieces[p.type].max_hp,
-            cooldown = 0
+            cooldown = 0,
+            last_cooldown = 1
         }
     end
 end
