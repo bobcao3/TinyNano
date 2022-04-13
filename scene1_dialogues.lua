@@ -104,7 +104,7 @@ Nano: It all makes sense now! That is why I am trapped in
             },
             {
                 target = 'chunky',
-                text = "Nano:…"
+                text = "Nano: ..."
             }
         }
     },
@@ -114,11 +114,11 @@ Chip: Anyways. Trust me, that Faceless one is really something
       you should avoid at all costs.
       Someone like me should not be wasting my time at this
       boring Mushroom Forest.
-      Here, take this.]],
+      Here, take these.]],
         choice = {
             {
                 target = 'poison_desc',
-                text = "You received a Poison Mushroom.",
+                text = "You received some Poison Mushrooms.",
                 trigger = function(board)
                     board:add_piece('archer', 'friendly', 5, 9)
                     board:add_piece('archer', 'friendly', 6, 9)
@@ -134,7 +134,7 @@ Chip: A Poison Mushroom is a mushroom that is scary looking
         choice = {
             {
                 target = 'panda',
-                text = "Nano: Interesting mushroom. "
+                text = "Nano: Dangerous and interesting looking mushrooms!"
             }
         }
     },    
@@ -144,11 +144,11 @@ Chip: Anyways. Trust me, that Faceless one is really something
       you should avoid at all costs.
       Someone like me should not be wasting my time at this
       boring Mushroom Forest.
-      Here, take this.]],
+      Here, take these.]],
         choice = {
             {
                 target = 'sharp_desc',
-                text = "You received a Sharp Mushroom",
+                text = "You received some Sharp Mushrooms",
                 trigger = function(board)
                     board:add_piece('pointy', 'friendly', 5, 9)
                     board:add_piece('pointy', 'friendly', 6, 9)
@@ -164,7 +164,7 @@ Chip: A Sharp Mushroom is a mushroom that is very sharp and grows
         choice = {
             {
                 target = 'panda',
-                text = "Nano: Wow, the mushroom is so sharp!"
+                text = "Nano: Wow, these mushrooms are so sharp!"
             }
         }
     },
@@ -174,11 +174,11 @@ Chip: Anyways. Trust me, that Faceless one is really something
       you should avoid at all costs.
       Someone like me should not be wasting my time at this
       boring Mushroom Forest.
-      Here, take this.]],
+      Here, take these.]],
         choice = {
             {
                 target = 'chunky_desc',
-                text = "You received a Chunky Mushroom.",
+                text = "You received some Chunky Mushrooms.",
                 trigger = function(board)
                     board:add_piece('knight', 'friendly', 5, 9)
                     board:add_piece('knight', 'friendly', 6, 9)
@@ -194,7 +194,7 @@ Chip: A Sharp Mushroom is a mushroom that is very sharp and grows
         choice = {
             {
                 target = 'panda',
-                text = "Nano: This mushroom is heavy!"
+                text = "Nano: These mushrooms are so heavy!"
             }
         }
     },
@@ -216,17 +216,18 @@ Panda: Nano! I was looking for you. It seems like Chip gave
         choice = {
             {
                 target = 'yes',
-                text = "Nano: Yes"
+                text = "Nano: Sure, I will trade with you."
             },
             {
                 target = 'no',
-                text = "Nano: No"
+                text = "Nano: No, I want to keep these."
             }
         }
     },
     yes = {
         message = [[
-Panda: A Fine Mushroom is shiny can often heal other mushrooms
+Panda: Here just take this.
+        A Fine Mushroom is shiny can often heal other mushrooms
        around it. I will let you explore the forest, and come
        find me at the House of Fairy when you're ready, ok?]],
         choice = {
@@ -234,14 +235,14 @@ Panda: A Fine Mushroom is shiny can often heal other mushrooms
                 target = 'sleep',
                 text = "You received a Fine Mushroom. ",
                 trigger = function (board)
-                    board:add_piece('healer', 'friendly', 6, 9)
+                    board:add_piece('healer', 'friendly', 7, 9)
                 end
             }
         }
     },
     no = {
         message = [[
-Panda: It's ok if you want to keep your mushroom from Chip.
+Panda: No worries, it's ok if you want to keep your mushroom from Chip.
        Come find me at the House of Fairy when you need me.]],
         choice = {
             {
