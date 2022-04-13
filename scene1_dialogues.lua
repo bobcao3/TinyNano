@@ -6,7 +6,9 @@ local dialogues = {
         choice = {
             {
                 target = 'b',
-                text = "Nano: Where is this place? \n I have never seen glowing mushrooms before."
+                text = [[
+Nano: Where is this place?
+      I have never seen glowing mushrooms before.]]
             }
         }
     },
@@ -36,11 +38,15 @@ local dialogues = {
             },
             {
                 target = 'd',
-                text = "Nano: Chip? Are you famous? \n I never heard of you."
+                text = [[
+Nano: Chip? Are you famous?
+      I never heard of you.]]
             },
             {
                 target = 'd',
-                text = "Nano:  I never met anyone famous before! \n Nice to meet you."
+                text = [[
+Nano: I never met anyone famous before!
+      Nice to meet you.]]
             }
         }
     },
@@ -62,7 +68,9 @@ local dialogues = {
         }
     },
     e = {
-        message = "Chip: It must be a trap of the Panda that you’re lost in this place.",
+        message = [[
+Chip: It must be a trap of the Panda that you're lost in
+      this place.]],
         choice = {
             {
                 target = 'f',
@@ -71,7 +79,9 @@ local dialogues = {
         }
     },
     f = {
-        message = "Chip: That Panda is one of a kind who tried to lock me up in the mysterious castle countless times.",
+        message = [[
+Chip: That Panda is one of a kind who tried to lock me up in
+      the mysterious castle countless times.]],
         choice = {
             {
                 target = 'g',
@@ -80,15 +90,17 @@ local dialogues = {
         }
     },
     g = {
-        message = "Chip: Don’t be fooled by that Panda.",
+        message = "Chip: Don't be fooled by that Panda.",
         choice = {
             {
                 target = 'poison',
-                text = "Nano: I don’t trust you. Panda seems nice."
+                text = "Nano: I don't trust you. Panda seems nice."
             },
             {
                 target = 'sharp',
-                text = "Nano: It all makes sense now! That is why I am trapped in this strange forest."
+                text = [[
+Nano: It all makes sense now! That is why I am trapped in
+      this strange forest.]]
             },
             {
                 target = 'chunky',
@@ -97,7 +109,12 @@ local dialogues = {
         }
     },
     poison = {
-        message = "Chip: Anyways. Trust me, that Faceless one is really something you should avoid at all costs. \n Someone like me should not be wasting my time at this boring Mushroom Forest. \n Here, take this.",
+        message = [[
+Chip: Anyways. Trust me, that Faceless one is really something
+      you should avoid at all costs.
+      Someone like me should not be wasting my time at this
+      boring Mushroom Forest.
+      Here, take this.]],
         choice = {
             {
                 target = 'poison_desc',
@@ -106,7 +123,10 @@ local dialogues = {
         }
     },
     poison_desc = {
-        message = "Chip: A Poison Mushroom is a mushroom that is scary looking from a distance and spits poison from two distances away. \n It doesn’t seem very strong up-close.",
+        message = [[
+Chip: A Poison Mushroom is a mushroom that is scary looking
+      from a distance and spits poison from two distances
+      away. It doesn't seem very strong up-close.]],
         choice = {
             {
                 target = 'panda',
@@ -115,7 +135,12 @@ local dialogues = {
         }
     },    
     sharp = {
-        message = "Chip: Anyways. Trust me, that Faceless one is really something you should avoid at all costs. \n Someone like me should not be wasting my time at this boring Mushroom Forest. \n Here, take this.",
+        message = [[
+Chip: Anyways. Trust me, that Faceless one is really something
+      you should avoid at all costs.
+      Someone like me should not be wasting my time at this
+      boring Mushroom Forest.
+      Here, take this.]],
         choice = {
             {
                 target = 'sharp_desc',
@@ -124,7 +149,10 @@ local dialogues = {
         }
     },
     sharp_desc = {
-        message = "Chip: A Sharp Mushroom is a mushroom that is very sharp and grows really tall, \n it seems to always be moving at a fast, making quite some damage. ",
+        message = [[
+Chip: A Sharp Mushroom is a mushroom that is very sharp and grows
+      really tall, it seems to always be moving at a fast, making
+      quite some damage.]],
         choice = {
             {
                 target = 'panda',
@@ -133,7 +161,12 @@ local dialogues = {
         }
     },
     chunky = {
-        message = "Chip: Anyways. Trust me, that Faceless one is really something you should avoid at all costs. \n Someone like me should not be wasting my time at this boring Mushroom Forest. \n Here, take this.",
+        message = [[
+Chip: Anyways. Trust me, that Faceless one is really something
+      you should avoid at all costs.
+      Someone like me should not be wasting my time at this
+      boring Mushroom Forest.
+      Here, take this.]],
         choice = {
             {
                 target = 'chunky_desc',
@@ -142,7 +175,10 @@ local dialogues = {
         }
     },
     chunky_desc = {
-        message = "Chip: A Sharp Mushroom is a mushroom that is very sharp and grows really tall, \n it seems to always be moving at a fast, making quite some damage.",
+        message = [[
+Chip: A Sharp Mushroom is a mushroom that is very sharp and grows
+      really tall, it seems to always be moving at a fast, making
+      quite some damage.]],
         choice = {
             {
                 target = 'panda',
@@ -160,7 +196,11 @@ local dialogues = {
         }
     },
     exchange = {
-        message = "Panda: Nano! I was looking for you. It seems like Chip gave you a Mushroom? \n I have a better mushroom. \n Do you want to trade with me? ",
+        message = [[
+Panda: Nano! I was looking for you. It seems like Chip gave
+       you a Mushroom?
+       I have a better mushroom.
+       Do you want to trade with me?]],
         choice = {
             {
                 target = 'yes',
@@ -173,7 +213,10 @@ local dialogues = {
         }
     },
     yes = {
-        message = "Panda: A Fine Mushroom is shiny can often hea other mushrooms around it. \n I will let you explore the forest, and come find me at the House of Fairy when you’re ready, ok?",
+        message = [[
+Panda: A Fine Mushroom is shiny can often heal other mushrooms
+       around it. I will let you explore the forest, and come
+       find me at the House of Fairy when you're ready, ok?]],
         choice = {
             {
                 target = 'sleep',
@@ -182,7 +225,9 @@ local dialogues = {
         }
     },
     no = {
-        message = "Panda: It’s ok if you want to keep your mushroom from Chip. \n Panda: Come find me at the House of Fairy when you need me.",
+        message = [[
+Panda: It's ok if you want to keep your mushroom from Chip.
+       Come find me at the House of Fairy when you need me.]],
         choice = {
             {
                 target = 'sleep',
@@ -191,7 +236,10 @@ local dialogues = {
         }
     },
     sleep = {
-        message = "The Mushroom Forest is quiet. \n You sit down and try to reflect on what has happened thus far. \n You fall asleep.",
+        message = [[
+The Mushroom Forest is quiet.
+You sit down and try to reflect on what has happened thus far.
+You fall asleep.]],
         choice = {
             {
                 target = 'start',
