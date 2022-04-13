@@ -5,7 +5,7 @@
 -- ============================================================================
 
 local scene = {
-    background_img = "scene0_bg.jpg",
+    background_img = "scene1_bg.png",
     pieces = {
         knight = {
             image = "strong_mushroom.png",
