@@ -425,24 +425,37 @@ function draw_unit_details()
         set_color_white(1)
         love.graphics.rectangle('fill', base_x + 65, base_y, 95, 64)
 
-        name_text = love.graphics.newText(font, pieces[type].name)
-        hp_text = love.graphics.newText(font, 
+        name_text = love.graphics.newText(font14, pieces[type].name)
+        hp_text = love.graphics.newText(font14, 
             tostring(get_cell_hp(cursor.selected.x, cursor.selected.y)) .. "/" ..
             tostring(pieces[type].max_hp))
         atk_text = love.graphics.newText(font, "ATK:" .. tostring(pieces[type].atk))
         def_text = love.graphics.newText(font, "DEF:" .. tostring(pieces[type].def))
 
+        base_x = base_x + 67
+        base_y = base_y + 2
+
+        set_color_white(2)
+        love.graphics.draw(name_text, base_x + 1, base_y + 1)
         set_color_white(4)
-        love.graphics.draw(name_text, base_x + 65, base_y)
+        love.graphics.draw(name_text, base_x, base_y)
+
+        if get_cell_team(cursor.selected.x, cursor.selected.y) == 'friendly' then
+            set_color_blue(2)
+        else
+            set_color_red(2)
+        end
+        love.graphics.draw(hp_text, base_x + 1, base_y + 17)
         if get_cell_team(cursor.selected.x, cursor.selected.y) == 'friendly' then
             set_color_blue(4)
         else
             set_color_red(4)
         end
-        love.graphics.draw(hp_text, base_x + 65, base_y + 16)
+        love.graphics.draw(hp_text, base_x, base_y + 16)
+
         set_color_white(3)
-        love.graphics.draw(atk_text, base_x + 65, base_y + 32)
-        love.graphics.draw(def_text, base_x + 65, base_y + 48)
+        love.graphics.draw(atk_text, base_x, base_y + 32)
+        love.graphics.draw(def_text, base_x, base_y + 42)
 
     end
 end
@@ -464,6 +477,7 @@ end
 -- Draw dialogue scene
 dialogue_state = 0
 dialogues = {}
+selected = 1
 
 function draw_dialogs()
     love.graphics.setColor(1, 1, 1, 1)
@@ -472,18 +486,35 @@ function draw_dialogs()
     love.graphics.draw(background_img, 0, 0)
 
     -- Draw dialogue message
-    message = love.graphics.newText(font, dialogues[dialogue_state].message)
-    love.graphics.draw(message, 10, 10)
+    set_color_white(1)
+    love.graphics.draw(dialogues[dialogue_state].message, 10 + 1, 10 + 1)
+    set_color_white(4)
+    love.graphics.draw(dialogues[dialogue_state].message, 10, 10)
+
+    local total_height = 0
 
     for i, c in ipairs(dialogues[dialogue_state].choice) do
-        local base_y = 100 + i * 40
-        set_color_blue(4)
-        love.graphics.rectangle('fill', 10, base_y, 200, 20)
-        set_color_blue(3)
-        love.graphics.rectangle('fill', 12, base_y + 2, 196, 16)
+        total_height = total_height + c.text:getHeight() + 12
+    end
+
+    local accum_height = 0
+
+    for i, c in ipairs(dialogues[dialogue_state].choice) do
+        local base_y = 216 - total_height + accum_height
+
+        if selected == i then
+            set_color_blue(4)
+            love.graphics.rectangle('line', 10, base_y, c.text:getWidth() + 6, c.text:getHeight() + 6)
+        end
+
+        set_color_blue(0)
+        love.graphics.rectangle('fill', 10 + 1, base_y + 1, c.text:getWidth() + 4, c.text:getHeight() + 4)
+        set_color_white(1)
+        love.graphics.draw(c.text, 14, base_y + 4)
         set_color_white(4)
-        text = love.graphics.newText(font, c.text)
-        love.graphics.draw(text, 12, base_y + 2)
+        love.graphics.draw(c.text, 13, base_y + 3)
+
+        accum_height = accum_height + c.text:getHeight() + 12
     end
 
     if dialogue_state == 'start' then
@@ -493,16 +524,50 @@ function draw_dialogs()
 end
 
 -- Mouse interaction of dialogues
-function dialog_mousepressed(x, y, button)
+
+function dialog_update()
+    local total_height = 0
+
     for i, c in ipairs(dialogues[dialogue_state].choice) do
-        local base_y = 100 + i * 40
+        total_height = total_height + c.text:getHeight() + 12
+    end
+
+    local accum_height = 0
+
+    for i, c in ipairs(dialogues[dialogue_state].choice) do
+        local base_y = 216 - total_height + accum_height
         local base_x = 10
-        local width = 200
-        local height = 20
+        local width = c.text:getWidth() + 6
+        local height = c.text:getHeight() + 6
+        if cursor.x >= base_x and cursor.x < base_x + width and cursor.y >= base_y and cursor.y < base_y + height then
+            selected = i
+            return
+        end
+
+        accum_height = accum_height + c.text:getHeight() + 12
+    end
+end
+
+function dialog_mousepressed(x, y, button)
+    local total_height = 0
+
+    for i, c in ipairs(dialogues[dialogue_state].choice) do
+        total_height = total_height + c.text:getHeight() + 12
+    end
+
+    local accum_height = 0
+
+    for i, c in ipairs(dialogues[dialogue_state].choice) do
+        local base_y = 216 - total_height + accum_height
+        local base_x = 10
+        local width = c.text:getWidth() + 6
+        local height = c.text:getHeight() + 6
         if cursor.x >= base_x and cursor.x < base_x + width and cursor.y >= base_y and cursor.y < base_y + height then
             dialogue_state = c.target
             return
         end
+
+        accum_height = accum_height + c.text:getHeight() + 12
     end
 end
 
@@ -548,16 +613,21 @@ end
 
 function load_dialogues(dialogue_file)
     dialogue_state, dialogues = love.filesystem.load(dialogue_file)()
+
+    for s, d in pairs(dialogues) do
+        d.message = love.graphics.newText(font, d.message)
+        for i, c in pairs(d.choice) do
+            c.text = love.graphics.newText(font, c.text)
+        end
+    end
 end
 
 function love.load()
     love.window.setMode(res_x * pixel_scale, res_y * pixel_scale)
     love.mouse.setVisible(false)
 
-    font = love.graphics.newImageFont("imagefont.png",
-        " abcdefghijklmnopqrstuvwxyz" ..
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
-        "123456789.,!?-+/():;%&`'*#=[]\"")
+    font14 = love.graphics.newFont("font14.fnt")
+    font = love.graphics.newFont("font10.fnt")
 
     attack_arrow = love.graphics.newImage("attack_arrow.png")
 
@@ -594,6 +664,8 @@ function love.update()
     update_cursor()
     if board_started then
         game_update()
+    else
+        dialog_update()
     end
 
     if start_board and (not board_started) then
