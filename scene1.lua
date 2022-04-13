@@ -109,12 +109,12 @@ local scene = {
         }
     },
     initial_pieces = {
-        friendly = {
+        enemy = {
             { type = "knight", x = 5, y = 2 },
             { type = "knight", x = 6, y = 2 },
             { type = "pointy", x = 7, y = 2 },
         },
-        enemy = {
+        friendly = {
             { type = "healer", x = 5, y = 9 },
             { type = "pointy", x = 6, y = 9 },
             { type = "archer", x = 7, y = 9 },
