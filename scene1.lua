@@ -5,7 +5,7 @@
 -- ============================================================================
 
 local scene = {
-    background_img = "scene1_bg.png",
+    background_img = "scene0_bg.jpg",
     pieces = {
         A = {
             image = "strong_mushroom.png",
@@ -17,6 +17,19 @@ local scene = {
             def = 0,
             atk_cd = 5.5,
             move_cd = 3.5,
+            allowed_moves = {
+                { x = -1, y = 0 },
+                { x = 1, y = 0 },
+                { x = 0, y = 0 },
+                { x = 0, y = -1 },
+                { x = 0, y = 1 },
+            },
+            allowed_attacks = {
+                { x = -1, y = 0 },
+                { x = 1, y = 0 },
+                { x = 0, y = -1 },
+                { x = 0, y = 1 },
+            }
         }
     },
     initial_pieces = {
@@ -24,15 +37,11 @@ local scene = {
             { type = "A", x = 5, y = 2 },
             { type = "A", x = 6, y = 2 },
             { type = "A", x = 7, y = 2 },
-            { type = "A", x = 8, y = 2 },
-            { type = "A", x = 9, y = 2 },
         },
         enemy = {
             { type = "A", x = 5, y = 9 },
             { type = "A", x = 6, y = 9 },
             { type = "A", x = 7, y = 9 },
-            { type = "A", x = 8, y = 9 },
-            { type = "A", x = 9, y = 9 },
         }
     }
 }
