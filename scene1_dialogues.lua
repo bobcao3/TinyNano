@@ -118,7 +118,11 @@ Chip: Anyways. Trust me, that Faceless one is really something
         choice = {
             {
                 target = 'poison_desc',
-                text = "You received a Poison Mushroom. "
+                text = "You received a Poison Mushroom.",
+                trigger = function(board)
+                    board:add_piece('archer', 'friendly', 5, 9)
+                    board:add_piece('archer', 'friendly', 6, 9)
+                end
             }
         }
     },
@@ -144,7 +148,11 @@ Chip: Anyways. Trust me, that Faceless one is really something
         choice = {
             {
                 target = 'sharp_desc',
-                text = "You received a Sharp Mushroom "
+                text = "You received a Sharp Mushroom",
+                trigger = function(board)
+                    board:add_piece('pointy', 'friendly', 5, 9)
+                    board:add_piece('pointy', 'friendly', 6, 9)
+                end
             }
         }
     },
@@ -170,7 +178,11 @@ Chip: Anyways. Trust me, that Faceless one is really something
         choice = {
             {
                 target = 'chunky_desc',
-                text = "You received a Chunky Mushroom."
+                text = "You received a Chunky Mushroom.",
+                trigger = function(board)
+                    board:add_piece('knight', 'friendly', 5, 9)
+                    board:add_piece('knight', 'friendly', 6, 9)
+                end
             }
         }
     },
@@ -220,7 +232,10 @@ Panda: A Fine Mushroom is shiny can often heal other mushrooms
         choice = {
             {
                 target = 'sleep',
-                text = "You received a Fine Mushroom. "
+                text = "You received a Fine Mushroom. ",
+                trigger = function (board)
+                    board:add_piece('healer', 'friendly', 6, 9)
+                end
             }
         }
     },

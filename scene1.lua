@@ -13,7 +13,7 @@ local scene = {
             name = "Chunky",
             desc = "",
             max_hp = 80,
-            atk = 9,
+            atk = 15,
             def = 3,
             atk_cd = 7.5,
             move_cd = 5.5,
@@ -61,6 +61,9 @@ local scene = {
                 { x = 1, y = 1 },
                 { x = 0, y = 2 },
                 { x = -1, y = 1 },
+            },
+            bonus = {
+                { target = 'pointy', multiplier = 2.0 }
             }
         },
         pointy = {
@@ -85,6 +88,9 @@ local scene = {
                 { x = 1, y = 0 },
                 { x = 0, y = -1 },
                 { x = 0, y = 1 },
+            },
+            bonus = {
+                { target = 'knight', multiplier = 2.5 }
             }
         },
         healer = {
@@ -115,9 +121,6 @@ local scene = {
             { type = "pointy", x = 7, y = 2 },
         },
         friendly = {
-            { type = "healer", x = 5, y = 9 },
-            { type = "pointy", x = 6, y = 9 },
-            { type = "archer", x = 7, y = 9 },
         }
     }
 }

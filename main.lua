@@ -55,13 +55,24 @@ res_y = 216
 
 pixel_scale = 3
 
+pieces = {}
+
 board = {
     base_x = 30,
     base_y = 21,
     tiles_x = 10,
     tiles_y = 10,
     tile_size = 16,
-    state = {}
+    state = {},
+    add_piece = function(self, type, team, x, y)
+        self.state[x][y] = {
+            type = type,
+            team = team,
+            hp = pieces[type].max_hp,
+            cooldown = 0,
+            last_cooldown = 1
+        }
+    end
 }
 
 cursor = {
@@ -69,8 +80,6 @@ cursor = {
     x = 0, y = 0,
     selected = { x = 0, y = 0 }
 }
-
-pieces = {}
 
 pickedup = {}
 
@@ -142,9 +151,18 @@ function kill_cell(i, j)
     board.state[i + 1][j + 1] = {}
 end
 
-function attack_cell(i, j, dmg)
+function attack_cell(i, j, pawn, dmg)
     local hp = get_cell_hp(i, j)
-    local dmg_comp = dmg - get_cell_def(i, j)
+    local dmg_comp = dmg
+    if pieces[pawn.type].bonus then
+        for _, b in ipairs(pieces[pawn.type].bonus) do
+            if get_cell_type(i, j) == b.target then
+                dmg_comp = dmg_comp * b.multiplier
+                break
+            end
+        end
+    end
+    dmg_comp = dmg_comp - get_cell_def(i, j)
     if dmg > 0 and dmg_comp < 1 then
         dmg_comp = 1
     end
@@ -240,7 +258,7 @@ function action(from_x, from_y, to_x, to_y)
         local pawn = board.state[from_x + 1][from_y + 1]
         if is_attack_allowed(from_x, from_y, to_x, to_y) then
             -- Attack
-            attack_cell(to_x, to_y, get_cell_atk(from_x, from_y))
+            attack_cell(to_x, to_y, pawn, get_cell_atk(from_x, from_y))
             board.state[from_x + 1][from_y + 1].cooldown = pieces[pawn.type].atk_cd
             board.state[from_x + 1][from_y + 1].last_cooldown = pieces[pawn.type].atk_cd
             return true
@@ -564,6 +582,9 @@ function dialog_mousepressed(x, y, button)
         local height = c.text:getHeight() + 6
         if cursor.x >= base_x and cursor.x < base_x + width and cursor.y >= base_y and cursor.y < base_y + height then
             dialogue_state = c.target
+            if c.trigger then
+                c.trigger(board)
+            end
             return
         end
 
@@ -591,23 +612,11 @@ function load_scene(theme_file)
     next_action_list = {}
 
     for i, p in ipairs(loaded.initial_pieces.friendly) do
-        board.state[p.x][p.y] = {
-            type = p.type,
-            team = 'friendly',
-            hp = pieces[p.type].max_hp,
-            cooldown = 0,
-            last_cooldown = 1
-        }
+        board:add_piece(p.type, 'friendly', p.x, p.y)
     end
 
     for i, p in ipairs(loaded.initial_pieces.enemy) do
-        board.state[p.x][p.y] = {
-            type = p.type,
-            team = 'enemy',
-            hp = pieces[p.type].max_hp,
-            cooldown = 0,
-            last_cooldown = 1
-        }
+        board:add_piece(p.type, 'enemy', p.x, p.y)
     end
 end
 
