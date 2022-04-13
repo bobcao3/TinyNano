@@ -2,7 +2,7 @@ local dialogue_state = 'a'
 
 local dialogues = {
     a = {
-        message = "place-holder thingy here pls click buttons",
+        message = "place-holder thingy here pls click\n buttons",
         choice = {
             {
                 target = 'b',

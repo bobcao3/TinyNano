@@ -276,10 +276,10 @@ end
 
 -- Draw the board
 
-function draw_unit_background(base_x, base_y, shade, prog, p)
+function draw_unit_background(base_x, base_y, border_shade, shade, prog, p)
     if p.type then
         if p.team == 'friendly' then
-            set_color_blue(shade)
+            set_color_blue(border_shade)
             love.graphics.rectangle(
                 'fill',
                 base_x,
@@ -287,7 +287,7 @@ function draw_unit_background(base_x, base_y, shade, prog, p)
                 board.tile_size,
                 board.tile_size)
         else
-            set_color_red(shade)
+            set_color_red(border_shade)
             love.graphics.rectangle(
                 'fill',
                 base_x,
@@ -337,11 +337,11 @@ function draw_board()
             local base_x = board.base_x + board.tile_size * (i - 1)
             local base_y = board.base_y + board.tile_size * (j - 1)
             local shade = (i + j) % 2 + 1
-            draw_unit_background(base_x, base_y, shade, 0, {})
+            draw_unit_background(base_x, base_y, shade, shade, 0, {})
             if is_pickedup() then
                 local p = board.state[pickedup.coord.x + 1][pickedup.coord.y + 1]
                 if is_move_allowed(pickedup.coord.x, pickedup.coord.y, i - 1, j - 1) then
-                    draw_unit_background(base_x, base_y, shade, 1, p)
+                    draw_unit_background(base_x, base_y, 4, shade, 1, p)
                 end
             end
         end
@@ -386,7 +386,7 @@ function draw_next_action_list()
         end
         local base_x = 30 + (i - 1) * board.tile_size
         local base_y = 184
-        draw_unit_background(base_x, base_y, shade, p.cooldown / p.last_cooldown, p)
+        draw_unit_background(base_x, base_y, shade, shade, p.cooldown / p.last_cooldown, p)
         set_color_white(4)
         draw_unit(base_x, base_y, p)
     end
