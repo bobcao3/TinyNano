@@ -197,7 +197,8 @@ Chip: A Sharp Mushroom is a mushroom that is very sharp and grows
     },
     exchange = {
         message = [[
-Panda: Nano! I was looking for you. It seems like Chip gave you a Mushroom?
+Panda: Nano! I was looking for you. It seems like Chip gave
+       you a Mushroom?
        I have a better mushroom.
        Do you want to trade with me?]],
         choice = {
