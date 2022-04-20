@@ -503,47 +503,87 @@ function draw_dialogs()
     love.graphics.clear()
     love.graphics.draw(background_img, 0, 0)
 
-    -- Draw dialogue message
-    set_color_white(1)
-    love.graphics.draw(dialogues[dialogue_state].message, 10 + 1, 10 + 1)
-    set_color_white(4)
-    love.graphics.draw(dialogues[dialogue_state].message, 10, 10)
-
-    local total_height = 0
-
-    for i, c in ipairs(dialogues[dialogue_state].choice) do
-        total_height = total_height + c.text:getHeight() + 12
+    -- Draw dialogue background
+    if not dialogues[dialogue_state].bright_background then
+        bg_height = dialogues[dialogue_state].message:getHeight() + 20
+        love.graphics.setColor(0, 0, 0, 0.5)
+        love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), bg_height)
+        love.graphics.setColor(0, 0, 0, 0.5)
+        love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), bg_height + 5)
+        love.graphics.setColor(0, 0, 0, 0.5)
+        love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
     end
 
-    local accum_height = 0
+    -- Draw dialogue message
+    msg_text = dialogues[dialogue_state].message
+    if not dialogues[dialogue_state].presented then
+        t = dialogues[dialogue_state].animation_state
+        st = ""
+        tt = 0
+        speed = 30.0
+        for idx = 1, #dialogues[dialogue_state].text_str do
+            c = string.sub(dialogues[dialogue_state].text_str, idx, idx)
+            if c == '{' then
+                tt = tt + speed
+            else
+                st = st .. c
+                if c == '.' or c == '?' or c == '!' then
+                    tt = tt + 7
+                elseif c == ',' then
+                    tt = tt + 4
+                else
+                    tt = tt + 1
+                end
+            end
+            if tt > t * speed then
+                msg_text = love.graphics.newText(font, st)
+                if idx >= string.len(dialogues[dialogue_state].text_str) then
+                    dialogues[dialogue_state].presented = true
+                end
+                break
+            end
+        end
+    end
 
-    for i, c in ipairs(dialogues[dialogue_state].choice) do
-        local base_y = 216 - total_height + accum_height
+    set_color_white(1)
+    love.graphics.draw(msg_text, 10 + 1, 10 + 1)
+    set_color_white(4)
+    love.graphics.draw(msg_text, 10, 10)
 
-        if selected == i then
-            set_color_blue(4)
-            love.graphics.rectangle('line', 10, base_y, c.text:getWidth() + 6, c.text:getHeight() + 6)
+    if dialogues[dialogue_state].presented then
+        local total_height = 0
+
+        for i, c in ipairs(dialogues[dialogue_state].choice) do
+            total_height = total_height + c.text:getHeight() + 12
         end
 
-        set_color_blue(0)
-        love.graphics.rectangle('fill', 10 + 1, base_y + 1, c.text:getWidth() + 4, c.text:getHeight() + 4)
-        set_color_white(1)
-        love.graphics.draw(c.text, 14, base_y + 4)
-        set_color_white(4)
-        love.graphics.draw(c.text, 13, base_y + 3)
+        local accum_height = 0
 
-        accum_height = accum_height + c.text:getHeight() + 12
+        for i, c in ipairs(dialogues[dialogue_state].choice) do
+            local base_y = 216 - total_height + accum_height
+
+            if selected == i then
+                set_color_blue(4)
+                love.graphics.rectangle('line', 10, base_y, c.text:getWidth() + 6, c.text:getHeight() + 6)
+            end
+
+            set_color_blue(0)
+            love.graphics.rectangle('fill', 10 + 1, base_y + 1, c.text:getWidth() + 4, c.text:getHeight() + 4)
+            set_color_white(1)
+            love.graphics.draw(c.text, 14, base_y + 4)
+            set_color_white(4)
+            love.graphics.draw(c.text, 13, base_y + 3)
+
+            accum_height = accum_height + c.text:getHeight() + 12
+        end
     end
-
-    if dialogue_state == 'start' then
-        start_board = true
-    end
-
 end
 
 -- Mouse interaction of dialogues
 
 function dialog_update()
+    dialogues[dialogue_state].animation_state = dialogues[dialogue_state].animation_state + love.timer.getDelta()
+
     local total_height = 0
 
     for i, c in ipairs(dialogues[dialogue_state].choice) do
@@ -564,31 +604,44 @@ function dialog_update()
 
         accum_height = accum_height + c.text:getHeight() + 12
     end
+
+    if dialogues[dialogue_state].presented then 
+        if dialogues[dialogue_state].auto_progress then
+            dialogue_state = dialogues[dialogue_state].auto_progress
+        end
+    end
+
+    if dialogue_state == 'start' then
+        start_board = true
+    end
+
 end
 
 function dialog_mousepressed(x, y, button)
-    local total_height = 0
+    if dialogues[dialogue_state].presented then
+        local total_height = 0
 
-    for i, c in ipairs(dialogues[dialogue_state].choice) do
-        total_height = total_height + c.text:getHeight() + 12
-    end
-
-    local accum_height = 0
-
-    for i, c in ipairs(dialogues[dialogue_state].choice) do
-        local base_y = 216 - total_height + accum_height
-        local base_x = 10
-        local width = c.text:getWidth() + 6
-        local height = c.text:getHeight() + 6
-        if cursor.x >= base_x and cursor.x < base_x + width and cursor.y >= base_y and cursor.y < base_y + height then
-            dialogue_state = c.target
-            if c.trigger then
-                c.trigger(board)
-            end
-            return
+        for i, c in ipairs(dialogues[dialogue_state].choice) do
+            total_height = total_height + c.text:getHeight() + 12
         end
-
-        accum_height = accum_height + c.text:getHeight() + 12
+    
+        local accum_height = 0
+    
+        for i, c in ipairs(dialogues[dialogue_state].choice) do
+            local base_y = 216 - total_height + accum_height
+            local base_x = 10
+            local width = c.text:getWidth() + 6
+            local height = c.text:getHeight() + 6
+            if cursor.x >= base_x and cursor.x < base_x + width and cursor.y >= base_y and cursor.y < base_y + height then
+                dialogue_state = c.target
+                if c.trigger then
+                    c.trigger(board)
+                end
+                return
+            end
+    
+            accum_height = accum_height + c.text:getHeight() + 12
+        end
     end
 end
 
@@ -624,7 +677,10 @@ function load_dialogues(dialogue_file)
     dialogue_state, dialogues = love.filesystem.load(dialogue_file)()
 
     for s, d in pairs(dialogues) do
+        d.text_str = d.message
         d.message = love.graphics.newText(font, d.message)
+        d.presented = false
+        d.animation_state = 0
         for i, c in pairs(d.choice) do
             c.text = love.graphics.newText(font, c.text)
         end

@@ -1,6 +1,13 @@
-local dialogue_state = 'a'
+local dialogue_state = 'intro'
 
 local dialogues = {
+    intro = {
+        message = "You woke up in a weird place...{{ ",
+        choice = {
+        },
+        bright_background = true,
+        auto_progress = 'a'
+    },
     a = {
         message = "You seem to have lost the panda.",
         choice = {
@@ -10,7 +17,8 @@ local dialogues = {
 Nano: Where is this place?
       I have never seen glowing mushrooms before.]]
             }
-        }
+        },
+        bright_background = true
     },
     b = {
         message = "Stranger: hehehe",
@@ -110,8 +118,8 @@ Nano: It all makes sense now! That is why I am trapped in
     },
     poison = {
         message = [[
-Chip: Anyways. Trust me, that Faceless one is really something
-      you should avoid at all costs.
+Chip: Anyways. Trust me, that Faceless one is really
+      something you should avoid at all costs.
       Someone like me should not be wasting my time at this
       boring Mushroom Forest.
       Here, take these.]],
@@ -255,17 +263,22 @@ Panda: No worries, it's ok if you want to keep your mushroom from Chip.
         message = [[
 The Mushroom Forest is quiet.
 You sit down and try to reflect on what has happened thus far.
-You fall asleep.]],
+You fall asleep.{}]],
         choice = {
-            {
-                target = 'start',
-                text = "You have been summoned."
-            }
-        }
+        },
+        auto_progress = 'summon'
+    },
+    summon = {
+        message = "You have been summoned{{",
+        choice = {},
+        bright_background = true,
+        auto_progress = 'start'
     },
     start = {
-        message = "You have been summoned",
-        choice = {}
+        message = "",
+        choice = {},
+        bright_background = true,
+        auto_progress = 'start'
     }
 }
 
