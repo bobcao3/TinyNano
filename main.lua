@@ -34,15 +34,15 @@ end
 
 function set_color_blue(shade)
     if shade == 4 then
-        love.graphics.setColor(93 / 255, 181 / 255, 249 / 255, 1)
+        love.graphics.setColor(125 / 255, 232 / 255, 80 / 255, 1)
     elseif shade == 3 then
-        love.graphics.setColor(70 / 255, 151 / 191, 230 / 255, 1)
+        love.graphics.setColor(54 / 255, 210 / 191, 44 / 255, 1)
     elseif shade == 2 then
-        love.graphics.setColor(56 / 255, 115 / 255, 172 / 255, 1)
+        love.graphics.setColor(46 / 255, 151 / 255, 64 / 255, 1)
     elseif shade == 1 then
-        love.graphics.setColor(44 / 255, 83 / 255, 121 / 255, 1)
+        love.graphics.setColor(41 / 255, 99 / 255, 65 / 255, 1)
     else
-        love.graphics.setColor(32 / 255, 54 / 255, 76 / 255, 1)
+        love.graphics.setColor(29 / 255, 55 / 255, 46 / 255, 1)
     end
 end
 
