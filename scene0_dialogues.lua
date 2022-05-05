@@ -93,8 +93,8 @@ Nightshade: Here, take this piece and place it on the board.
      Look at you being so lost. 
     I will give you a hint that each piece 
     has a different ability.]],
-            character_top = "boss",
-            character_bottom = "nano",
+            character_center_left = "paper",
+            character_center_right = "rock",
         choice = {
             {
                 target = 'f',

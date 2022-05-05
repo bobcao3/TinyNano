@@ -2,8 +2,7 @@ local dialogue_state = 'final'
 
 local dialogues = {
     final = {
-        message = "The bright light wakes you up.{{{"   
-,
+        message = "The bright light wakes you up.{{{",
         choice = {
         },
         bright_background = true,
@@ -15,7 +14,7 @@ local dialogues = {
         choice = {
             {
                 target = 'b',
-                text = "Nano: First, mushroom forest, and now is this? A … garden?"
+                text = "Nano: First, mushroom forest, and now is this? A ... garden?"
             }
         },
         bright_background = true
@@ -25,7 +24,9 @@ local dialogues = {
 Nano: These flowers reminded me of the mushroom pieces
      from the battle. 
     I should probably keep it.]],
-    character_bottom = "nano",
+    character_center = 'archer',
+    character_center_left = "spear",
+    character_center_right = "healer",
         choice = {
             {
                 target = 'c',

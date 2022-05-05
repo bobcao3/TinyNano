@@ -7,6 +7,7 @@ Panda: Nano, it is time to wake up. You cannot sleep here.
        Oh, it seems like you are not ready to wake up yet.
        Don't move and wait for me here, ok?
         ]],
+        character_bottom = "panda",
         choice = {
         },
         bright_background = true,
