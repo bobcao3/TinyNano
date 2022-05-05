@@ -10,6 +10,7 @@ local scene = {
         nano = "Art/Nano.png",
         panda = "Art/Panda.png",
         teacup = "Art/Teacup.png",
+        boss = "Art/Boss.png",
         archer = "Art/Pieces/Level2Garden/L2-Archer.png",
         healer = "Art/Pieces/Level2Garden/L2-Healer.png",
         knight = "Art/Pieces/Level2Garden/L2-Knight.png",
