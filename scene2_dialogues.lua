@@ -2,7 +2,7 @@ local dialogue_state = 'final'
 
 local dialogues = {
     final = {
-        message = "The bright light wakes you up."   
+        message = "The bright light wakes you up.{{{"   
 ,
         choice = {
         },
@@ -29,7 +29,7 @@ Nano: These flowers reminded me of the mushroom pieces
         choice = {
             {
                 target = 'c',
-                text = "Pick up the Rose and Lily"
+                text = "Pick up the Rose and Lily",
                 trigger = function(board)
                     board:add_piece('pointy', 'friendly', 5, 9)
                     board:add_piece('knight', 'friendly', 6, 9)
@@ -37,7 +37,7 @@ Nano: These flowers reminded me of the mushroom pieces
             },
             {
                 target = 'c',
-                text = "Pick up the Lily and Lily of the Valley"
+                text = "Pick up the Lily and Lily of the Valley",
                 trigger = function(board)
                     board:add_piece('knight', 'friendly', 5, 9)
                     board:add_piece('archer', 'friendly', 6, 9)
@@ -45,7 +45,7 @@ Nano: These flowers reminded me of the mushroom pieces
             },
             {
                 target = 'c',
-                text = "Pick up the Rose and Lily of the valley"
+                text = "Pick up the Rose and Lily of the valley",
                 trigger = function(board)
                     board:add_piece('archer', 'friendly', 5, 9)
                     board:add_piece('pointy', 'friendly', 6, 9)
@@ -102,10 +102,12 @@ Nano: How do I know if you are not trying to
  Panda: I do not have much time to explain.
     Take these DAISY and ROSE before Nightshade returns.
         ]],
+        character_center_left = "spear",
+        character_center_right = "healer",
         choice = {
             {
                 target = 'g',
-                text = "Nano: What? Nightshade is coming?"
+                text = "Nano: What? Nightshade is coming?",
                 trigger = function(board)
                     board:add_piece('pointy', 'friendly', 4, 9)
                     board:add_piece('healer', 'friendly', 7, 9)

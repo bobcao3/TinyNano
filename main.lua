@@ -607,6 +607,22 @@ function draw_dialogs()
         love.graphics.draw(c, (canvas:getWidth() - c:getWidth()) / 2,  (canvas:getHeight() - c:getHeight()) / 2 + wobble)
     end
 
+    local character_center_left = dialogues[dialogue_state].character_center_left
+    if character_center_left ~= nil then
+        local wobble = math.floor(math.sin(love.timer.getTime() * 7.93 + 3) * 3 + 0.5)
+        local c = characters[character_center_left]
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(c, (canvas:getWidth() / 2 - c:getWidth()) / 2,  (canvas:getHeight() - c:getHeight()) / 2 + wobble)
+    end
+
+    local character_center_right = dialogues[dialogue_state].character_center_right
+    if character_center_right ~= nil then
+        local wobble = math.floor(math.sin(love.timer.getTime() * 7.93 + 3) * 3 + 0.5)
+        local c = characters[character_center_right]
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(c, canvas:getWidth() / 2 + (canvas:getWidth() / 2 - c:getWidth()) / 2,  (canvas:getHeight() - c:getHeight()) / 2 + wobble)
+    end
+
     local character_bottom = dialogues[dialogue_state].character_bottom
     if character_bottom ~= nil then
         local wobble = math.floor(math.sin(love.timer.getTime() * 8.3 - 2) * 3 + 0.5)
@@ -862,7 +878,7 @@ function love.load()
     canvas_dialog = love.graphics.newCanvas(res_x, res_y)
     canvas_dialog:setFilter("nearest", "nearest")
 
-    reset_state("scene0")
+    reset_state("scene2")
 end
 
 -- ============================================================================

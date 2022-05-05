@@ -5,21 +5,21 @@
 -- ============================================================================
 
 local scene = {
-    background_img = "Art/L1-Original.png",
+    background_img = "Art/L2-Original.png",
     characters = {
         nano = "Art/Nano.png",
         panda = "Art/Panda.png",
         teacup = "Art/Teacup.png",
-        archer = "Art/Pieces/Level1Mushroom/L1-Archer.png",
-        healer = "Art/Pieces/Level1Mushroom/L1-Healer.png",
-        knight = "Art/Pieces/Level1Mushroom/L1-Knight.png",
-        spear = "Art/Pieces/Level1Mushroom/L1-Spear.png",
+        archer = "Art/Pieces/Level2Garden/L2-Archer.png",
+        healer = "Art/Pieces/Level2Garden/L2-Healer.png",
+        knight = "Art/Pieces/Level2Garden/L2-Knight.png",
+        spear = "Art/Pieces/Level2Garden/L2-Spear.png",
     },
     pieces = {
         knight = {
             image = "strong_mushroom.png",
-            portrait_img = "Art/Pieces/Level1Mushroom/L1-KnightGreen.png",
-            portrait_img_enemy = "Art/Pieces/Level1Mushroom/L1-KnightRed.png",
+            portrait_img = "Art/Pieces/Level2Garden/L2-KnightGreen.png",
+            portrait_img_enemy = "Art/Pieces/Level2Garden/L2-KnightRed.png",
             name = "Chunky",
             desc = "",
             max_hp = 80,
@@ -47,8 +47,8 @@ local scene = {
         },
         archer = {
             image = "archer_mushroom.png",
-            portrait_img = "Art/Pieces/Level1Mushroom/L1-ArcherGreen.png",
-            portrait_img_enemy = "Art/Pieces/Level1Mushroom/L1-ArcherRed.png",
+            portrait_img = "Art/Pieces/Level2Garden/L2-ArcherGreen.png",
+            portrait_img_enemy = "Art/Pieces/Level2Garden/L2-ArcherRed.png",
             name = "Poison",
             desc = "",
             max_hp = 35,
@@ -79,8 +79,8 @@ local scene = {
         },
         pointy = {
             image = "pointy_mushroom.png",
-            portrait_img = "Art/Pieces/Level1Mushroom/L1-SpearGreen.png",
-            portrait_img_enemy = "Art/Pieces/Level1Mushroom/L1-SpearRed.png",
+            portrait_img = "Art/Pieces/Level2Garden/L2-SpearGreen.png",
+            portrait_img_enemy = "Art/Pieces/Level2Garden/L2-SpearRed.png",
             name = "Sharp",
             desc = "",
             max_hp = 50,
@@ -107,8 +107,8 @@ local scene = {
         },
         healer = {
             image = "healer_mushroom.png",
-            portrait_img = "Art/Pieces/Level1Mushroom/L1-HealerGreen.png",
-            portrait_img_enemy = "Art/Pieces/Level1Mushroom/L1-HealerRed.png",
+            portrait_img = "Art/Pieces/Level2Garden/L2-HealerGreen.png",
+            portrait_img_enemy = "Art/Pieces/Level2Garden/L2-HealerRed.png",
             name = "Fine",
             desc = "",
             max_hp = 50,
