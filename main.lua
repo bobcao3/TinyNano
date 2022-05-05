@@ -1,5 +1,7 @@
 -- local console_toggle = require("love2d-console.console.console")
 
+current_chapter = 'scene0'
+
 function love.textinput(text)
     -- console_toggle(text)
 end
@@ -55,38 +57,6 @@ res_y = 216
 
 pixel_scale = 3
 
-pieces = {}
-
-board = {
-    base_x = 30,
-    base_y = 21,
-    tiles_x = 10,
-    tiles_y = 10,
-    tile_size = 16,
-    state = {},
-    add_piece = function(self, type, team, x, y)
-        self.state[x][y] = {
-            type = type,
-            team = team,
-            hp = pieces[type].max_hp,
-            cooldown = 0,
-            last_cooldown = 1
-        }
-    end
-}
-
-cursor = {
-    window_x = 0, window_y = 0,
-    x = 0, y = 0,
-    selected = { x = 0, y = 0 }
-}
-
-pickedup = {}
-
-transition = 0
-board_started = false
-start_board = false
-
 -- ============================================================================
 -- Game Logic
 -- ============================================================================
@@ -110,6 +80,8 @@ end
 -- Update next action list
 function update_next_action_list()
     local list = {}
+    local friendly = 0
+    local enemy = 0
     for i = 0, board.tiles_x - 1 do
         for j = 0, board.tiles_y - 1 do
             if not is_cell_empty(i, j) then
@@ -120,11 +92,29 @@ function update_next_action_list()
                 end
                 board.state[i + 1][j + 1].cooldown = cd
                 table.insert(list, {x = i, y = j, cooldown = cd})
+                if get_cell_team(i, j) == 'enemy' then
+                    enemy = enemy + 1
+                else
+                    friendly = friendly + 1
+                end
             end
         end
     end
     table.sort(list, function (k1, k2) return k1.cooldown < k2.cooldown end)
     next_action_list = list
+    
+    if friendly == 0 then
+        -- Died
+        reset_state(current_chapter)
+    elseif enemy == 0 then
+        if current_chapter == 'scene0' then
+            reset_state('scene1')
+        elseif current_chapter == 'scene1' then
+            reset_state('scene2')
+        elseif current_chapter == 'scene2' then
+            reset_state('win')
+        end
+    end
 end
 
 -- Get a cell on the board
@@ -207,7 +197,8 @@ function game_mousepressed(x, y, button)
                 pickedup = {}
             end
         else
-            if is_cell_empty(cursor.selected.x, cursor.selected.y) then
+            if is_cell_empty(cursor.selected.x, cursor.selected.y) or
+               get_cell_team(cursor.selected.x, cursor.selected.y) == 'enemy' then
                 pickedup = {}
             elseif get_cell_cooldown(cursor.selected.x, cursor.selected.y) <= 0 then
                 pickedup.coord = {
@@ -427,18 +418,31 @@ function draw_board_cursor()
 end
 
 -- Draw
+function draw_boss()
+    set_color_white(4)
+    local wobble = math.floor(math.sin(love.timer.getTime() * 3.14 + 7) * 6 + 0.5)
+    love.graphics.draw(boss_with_face, 205, 5 + wobble)
+end
+
 function draw_unit_details()
     if not is_cell_empty(cursor.selected.x, cursor.selected.y) then
-        type = get_cell_type(cursor.selected.x, cursor.selected.y)
+        local type = get_cell_type(cursor.selected.x, cursor.selected.y)
 
         local base_x = 193
         local base_y = 136
 
-        set_color_white(3)
-        love.graphics.rectangle('fill', base_x, base_y, 64, 64)
+        set_color_white(2)
+        -- love.graphics.rectangle('fill', base_x, base_y, 64, 64)
 
         set_color_white(4)
-        love.graphics.draw(pieces[type].portrait_img, base_x, base_y)
+        local portrait_x = base_x + (64 - pieces[type].portrait_img:getWidth()) / 2
+        local portrait_y = base_y + (64 - pieces[type].portrait_img:getHeight()) / 2
+        local wobble = math.floor(math.sin(love.timer.getTime() * 8.1 + 2) * 1.5 + 0.5)
+        if get_cell_team(cursor.selected.x, cursor.selected.y) == 'enemy' then
+            love.graphics.draw(pieces[type].portrait_img_enemy, portrait_x, portrait_y + wobble)
+        else
+            love.graphics.draw(pieces[type].portrait_img, portrait_x, portrait_y + wobble)
+        end
 
         set_color_white(1)
         love.graphics.rectangle('fill', base_x + 65, base_y, 95, 64)
@@ -484,6 +488,7 @@ function draw_scene()
     draw_board()
     draw_next_action_list()
     draw_board_cursor()
+    draw_boss()
     draw_unit_details()
 end
 
@@ -514,15 +519,40 @@ function draw_dialogs()
         love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
     end
 
+    -- Draw portraits
+    local character_top = dialogues[dialogue_state].character_top
+    if character_top ~= nil then
+        local wobble = math.floor(math.sin(love.timer.getTime() * 8.1 + 7) * 3 + 0.5)
+        local c = characters[character_top]
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(c, 5, 5 + wobble)
+    end
+
+    local character_center = dialogues[dialogue_state].character_center
+    if character_center ~= nil then
+        local wobble = math.floor(math.sin(love.timer.getTime() * 7.93 + 3) * 3 + 0.5)
+        local c = characters[character_center]
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(c, (canvas:getWidth() - c:getWidth()) / 2,  (canvas:getHeight() - c:getHeight()) / 2 + wobble)
+    end
+
+    local character_bottom = dialogues[dialogue_state].character_bottom
+    if character_bottom ~= nil then
+        local wobble = math.floor(math.sin(love.timer.getTime() * 8.3 - 2) * 3 + 0.5)
+        local c = characters[character_bottom]
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(c, canvas:getWidth() - c:getWidth() - 5,  canvas:getHeight() - c:getHeight() - 5 + wobble)
+    end
+
     -- Draw dialogue message
-    msg_text = dialogues[dialogue_state].message
+    local msg_text = dialogues[dialogue_state].message
     if not dialogues[dialogue_state].presented then
-        t = dialogues[dialogue_state].animation_state
-        st = ""
-        tt = 0
-        speed = 30.0
+        local t = dialogues[dialogue_state].animation_state
+        local st = ""
+        local tt = 0
+        local speed = 40.0
         for idx = 1, #dialogues[dialogue_state].text_str do
-            c = string.sub(dialogues[dialogue_state].text_str, idx, idx)
+            local c = string.sub(dialogues[dialogue_state].text_str, idx, idx)
             if c == '{' then
                 tt = tt + speed
             else
@@ -649,9 +679,64 @@ end
 -- Initialization
 -- ============================================================================
 
+function reset_state(n)
+    pieces = {}
+
+    board = {
+        base_x = 30,
+        base_y = 21,
+        tiles_x = 10,
+        tiles_y = 10,
+        tile_size = 16,
+        state = {},
+        add_piece = function(self, type, team, x, y)
+            self.state[x][y] = {
+                type = type,
+                team = team,
+                hp = pieces[type].max_hp,
+                cooldown = 0,
+                last_cooldown = 1
+            }
+        end
+    }
+
+    for i=0,board.tiles_x do
+        board.state[i] = {}
+        for j=0,board.tiles_y do
+            board.state[i][j] = {}
+        end
+    end
+
+    cursor = {
+        window_x = 0, window_y = 0,
+        x = 0, y = 0,
+        selected = { x = 0, y = 0 }
+    }
+
+    pickedup = {}
+
+    transition = 0
+    board_started = false
+    start_board = false
+
+    next_action_list = {}
+
+    load_scene(n .. ".lua")
+    load_dialogues(n .. "_dialogues.lua")
+end
+
 function load_scene(theme_file)
     local loaded = love.filesystem.load(theme_file)()
     background_img = love.graphics.newImage(loaded.background_img)
+
+    characters = loaded.characters
+
+    for name, c in pairs(characters) do
+        characters[name] = love.graphics.newImage(c)
+    end
+
+    boss = love.graphics.newImage('Art/Boss.png')
+    boss_with_face = love.graphics.newImage('Art/bossface.png')
 
     pieces = loaded.pieces
     friendly_sprite = love.graphics.newQuad(16, 0, 16, 16, 32, 16)
@@ -660,9 +745,8 @@ function load_scene(theme_file)
     for name, p in pairs(pieces) do
         p.image = love.graphics.newImage(p.image)
         p.portrait_img = love.graphics.newImage(p.portrait_img)
+        p.portrait_img_enemy = love.graphics.newImage(p.portrait_img_enemy)
     end
-
-    next_action_list = {}
 
     for i, p in ipairs(loaded.initial_pieces.friendly) do
         board:add_piece(p.type, 'friendly', p.x, p.y)
@@ -702,15 +786,7 @@ function love.load()
     canvas_dialog = love.graphics.newCanvas(res_x, res_y)
     canvas_dialog:setFilter("nearest", "nearest")
 
-    for i=0,board.tiles_x do
-        board.state[i] = {}
-        for j=0,board.tiles_y do
-            board.state[i][j] = {}
-        end
-    end
-
-    load_scene("scene1.lua")
-    load_dialogues("scene1_dialogues.lua")
+    reset_state("scene0")
 end
 
 -- ============================================================================

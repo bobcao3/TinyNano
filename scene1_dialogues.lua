@@ -2,14 +2,20 @@ local dialogue_state = 'intro'
 
 local dialogues = {
     intro = {
-        message = "You woke up in a weird place...{{ ",
+        message = [[
+Panda: Nano, it is time to wake up. You cannot sleep here.
+       Oh, it seems like you are not ready to wake up yet.
+       Don't move and wait for me here, ok?
+        ]],
         choice = {
         },
         bright_background = true,
         auto_progress = 'a'
     },
     a = {
-        message = "You seem to have lost the panda.",
+        message = [[You woke up and started to look for Panda. 
+    There is no one around. ]],
+        character_bottom = "nano",
         choice = {
             {
                 target = 'b',
@@ -22,6 +28,8 @@ Nano: Where is this place?
     },
     b = {
         message = "Stranger: hehehe",
+        character_top = "teacup",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'c',
@@ -38,16 +46,18 @@ Nano: Where is this place?
         }
     },
     c = {
-        message = "Stranger: I am the famous Tea Cup, Chip. ",
+        message = "Stranger: I am the famous Tea Cup, Chip.",
+        character_top = "teacup",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'd',
-                text = "Nano: Where is this place?"
+                text = "Nano: You are a teacup?"
             },
             {
                 target = 'd',
                 text = [[
-Nano: Chip? Are you famous?
+Nano: Chip? Famous?
       I never heard of you.]]
             },
             {
@@ -59,15 +69,17 @@ Nano: I never met anyone famous before!
         }
     },
     d = {
-        message = "Chip: You are not from around here, are you?",
+        message = "Chip: You are so tiny. You must be from somewhere else?",
+        character_top = "teacup",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'e',
-                text = "Nano: No, can you tell me where the panda went?"
+                text = "Nano: Can you please just tell me where the panda went?"
             },
             {
                 target = 'e',
-                text = "Nano: I am from a different forest far from here."
+                text = "Nano: I am from a different land far from here."
             },
             {
                 target = 'e',
@@ -79,36 +91,42 @@ Nano: I never met anyone famous before!
         message = [[
 Chip: It must be a trap of the Panda that you're lost in
       this place.]],
+        character_top = "teacup",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'f',
-                text = "Nano: ..."
+                text = "Nano: What do you mean?"
             }
         }
     },
     f = {
         message = [[
 Chip: That Panda is one of a kind who tried to lock me up in
-      the mysterious castle countless times.]],
+      the Mysterious Castle countless times.]],
+        character_top = "teacup",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'g',
-                text = "Nano: ..."
+                text = "Nano: Mysterious Castle?"
             }
         }
     },
     g = {
         message = "Chip: Don't be fooled by that Panda.",
+        character_top = "teacup",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'poison',
-                text = "Nano: I don't trust you. Panda seems nice."
+                text = "Nano: Panda seems to look after me. Why should I trust you?"
             },
             {
                 target = 'sharp',
                 text = [[
-Nano: It all makes sense now! That is why I am trapped in
-      this strange forest.]]
+Nano: Is that why I saw Panda before I got lost here? 
+      It all makes sense now! ]]
             },
             {
                 target = 'chunky',
@@ -120,9 +138,10 @@ Nano: It all makes sense now! That is why I am trapped in
         message = [[
 Chip: Anyways. Trust me, that Faceless one is really
       something you should avoid at all costs.
-      Someone like me should not be wasting my time at this
-      boring Mushroom Forest.
-      Here, take these.]],
+      Here, take these. 
+      I can try to be a nice person for my new tiny friend.]],
+        character_top = "teacup",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'poison_desc',
@@ -139,20 +158,24 @@ Chip: Anyways. Trust me, that Faceless one is really
 Chip: A Poison Mushroom is a mushroom that is scary looking
       from a distance and spits poison from two distances
       away. It doesn't seem very strong up-close.]],
+        character_top = "teacup",
+        character_center = "archer",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'panda',
-                text = "Nano: Dangerous and interesting looking mushrooms!"
+                text = "Nano: Why are you giving me thses dangerous mushrooms?"
             }
         }
     },    
     sharp = {
         message = [[
-Chip: Anyways. Trust me, that Faceless one is really something
-      you should avoid at all costs.
-      Someone like me should not be wasting my time at this
-      boring Mushroom Forest.
-      Here, take these.]],
+Chip: Anyways. Trust me, that Faceless one is really
+    something you should avoid at all costs.
+    Here, take these. 
+    I can try to be a nice person for my new tiny friend.]],
+        character_top = "teacup",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'sharp_desc',
@@ -166,9 +189,12 @@ Chip: Anyways. Trust me, that Faceless one is really something
     },
     sharp_desc = {
         message = [[
-Chip: A Sharp Mushroom is a mushroom that is very sharp and grows
-      really tall, it seems to always be moving at a fast, making
-      quite some damage.]],
+Chip: A Sharp Mushroom is a mushroom that is very sharp and 
+      grows really tall, it seems to always be moving at 
+      a fast speed, making quite some damage.]],
+        character_top = "teacup",
+        character_center = "spear",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'panda',
@@ -178,11 +204,11 @@ Chip: A Sharp Mushroom is a mushroom that is very sharp and grows
     },
     chunky = {
         message = [[
-Chip: Anyways. Trust me, that Faceless one is really something
-      you should avoid at all costs.
-      Someone like me should not be wasting my time at this
-      boring Mushroom Forest.
-      Here, take these.]],
+Chip: Anyways. Trust me, that Faceless one is really
+    something you should avoid at all costs.
+    Here, take these. 
+    I can try to be a nice person for my new tiny friend.]],
+        character_top = "teacup",
         choice = {
             {
                 target = 'chunky_desc',
@@ -196,9 +222,13 @@ Chip: Anyways. Trust me, that Faceless one is really something
     },
     chunky_desc = {
         message = [[
-Chip: A Sharp Mushroom is a mushroom that is very sharp and grows
-      really tall, it seems to always be moving at a fast, making
-      quite some damage.]],
+Chip: A Chunky Mushroom is heavy and chunky mushroom 
+      that accidentally grown too large, 
+      doesn't seem to move very fast,
+      but sure has a lot of health.]],
+        character_top = "teacup",
+        character_center = "knight",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'panda',
@@ -207,20 +237,44 @@ Chip: A Sharp Mushroom is a mushroom that is very sharp and grows
         }
     },
     panda = {
-        message = "Panda appear.",
+        message = [[
+Panda appear.
+Chip: uh. Speak of the devil. 
+      Look at who is here? I am leaving this place now.]],
+        character_top = "panda",
+        character_bottom = "nano",
+        choice = {
+            {
+                target = 'panda_talk',
+                text = 
+                [[
+Nano: Panda, why did you left me in this weird place?
+      Is everything just a dream?]]
+            }
+        }
+    },
+    panda_talk = {
+        message = [[
+Chip disappeared. 
+Panda: Nano! I was looking for you. Is everything alright?
+       This is not just a dream, 
+       Nano. You don't remember what happened?]],
+        character_top = "panda",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'exchange',
-                text = "Chip: Chip: uh. Speak of the devil. Look at who is here? \n I am leaving this place now."
+                text = "Nano: I cannot remember anything."
             }
         }
     },
     exchange = {
         message = [[
-Panda: Nano! I was looking for you. It seems like Chip gave
-       you a Mushroom?
-       I have a better mushroom.
-       Do you want to trade with me?]],
+Panda: You will remember when the time comes.
+       Oh, it seems like Chip gave you some mushrooms? 
+       I have some better ones, do you want to trade?]],
+        character_top = "panda",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'yes',
@@ -234,10 +288,13 @@ Panda: Nano! I was looking for you. It seems like Chip gave
     },
     yes = {
         message = [[
-Panda: Here just take this.
-        A Fine Mushroom is shiny can often heal other mushrooms
-       around it. I will let you explore the forest, and come
-       find me at the House of Fairy when you're ready, ok?]],
+Panda: Here just take this. 
+       I am running out of preperation time.
+       A Fine Mushroom is shiny can often heal other mushrooms
+       around it. I am sure we will meet again!]],
+        character_top = "panda",
+        character_center = "healer",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'sleep',
@@ -250,8 +307,11 @@ Panda: Here just take this.
     },
     no = {
         message = [[
-Panda: No worries, it's ok if you want to keep your mushroom from Chip.
-       Come find me at the House of Fairy when you need me.]],
+Panda: I have to get going. 
+       I am running out of time for preperation.
+       I am sure we will meet again!]],
+        character_top = "panda",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'sleep',
@@ -263,7 +323,7 @@ Panda: No worries, it's ok if you want to keep your mushroom from Chip.
         message = [[
 The Mushroom Forest is quiet.
 You sit down and try to reflect on what has happened thus far.
-You fall asleep.{}]],
+You feel the strage atmosphere approaching.{}]],
         choice = {
         },
         auto_progress = 'summon'

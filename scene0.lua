@@ -5,15 +5,14 @@
 -- ============================================================================
 
 local scene = {
-    background_img = "Art/L1-Original.png",
+    background_img = "Art/L0-Original.png",
     characters = {
         nano = "Art/Nano.png",
         panda = "Art/Panda.png",
         teacup = "Art/Teacup.png",
-        archer = "Art/Pieces/Level1Mushroom/L1-Archer.png",
-        healer = "Art/Pieces/Level1Mushroom/L1-Healer.png",
-        knight = "Art/Pieces/Level1Mushroom/L1-Knight.png",
-        spear = "Art/Pieces/Level1Mushroom/L1-Spear.png",
+        paper = "Art/Pieces/Level0Rock-Paper-Scissor/L0-Paper.png",
+        rock = "Art/Pieces/Level0Rock-Paper-Scissor/L0-RockGreen.png",
+        scissor = "Art/Pieces/Level0Rock-Paper-Scissor/L0-Scissor.png",
     },
     pieces = {
         knight = {
@@ -129,11 +128,10 @@ local scene = {
     },
     initial_pieces = {
         enemy = {
-            { type = "knight", x = 5, y = 2 },
-            { type = "knight", x = 6, y = 2 },
-            { type = "pointy", x = 7, y = 2 },
+            { type = "pointy", x = 7, y = 4 },
         },
         friendly = {
+            { type = "pointy", x = 7, y = 7 },
         }
     }
 }
