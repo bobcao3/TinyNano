@@ -87,11 +87,11 @@ function update_next_action_list()
             if not is_cell_empty(i, j) then
                 local cd = get_cell_cooldown(i, j)
                 cd = cd - love.timer.getDelta()
-                if cd < 0 then
-                    cd = 0
-                end
+                -- if cd < 0 then
+                --     cd = 0
+                -- end
                 board.state[i + 1][j + 1].cooldown = cd
-                table.insert(list, {x = i, y = j, cooldown = cd})
+                table.insert(list, {x = i, y = j, cooldown = math.max(0, cd)})
                 if get_cell_team(i, j) == 'enemy' then
                     enemy = enemy + 1
                 else
@@ -141,8 +141,7 @@ function kill_cell(i, j)
     board.state[i + 1][j + 1] = {}
 end
 
-function attack_cell(i, j, pawn, dmg)
-    local hp = get_cell_hp(i, j)
+function compute_damage(i, j, pawn, dmg)
     local dmg_comp = dmg
     if pieces[pawn.type].bonus then
         for _, b in ipairs(pieces[pawn.type].bonus) do
@@ -156,11 +155,65 @@ function attack_cell(i, j, pawn, dmg)
     if dmg > 0 and dmg_comp < 1 then
         dmg_comp = 1
     end
-    hp = hp - dmg_comp
+    return dmg_comp
+end
+
+function attack_cell(i, j, pawn, dmg)
+    local hp = get_cell_hp(i, j)
+    hp = hp - compute_damage(i, j, pawn, dmg)
     if hp <= 0 then
         kill_cell(i, j)
     else
         board.state[i + 1][j + 1].hp = hp
+    end
+end
+
+function min_distance_to_friendly(x, y)
+    local min_d = 1000.0
+    for oi, oa in ipairs(next_action_list) do
+        local other_x = oa.x
+        local other_y = oa.y
+        if get_cell_team(other_x, other_y) ~= 'enemy' then
+            min_d = math.min(min_d, math.abs(other_x - x) + math.abs(other_y - y))
+        end
+    end
+    return min_d
+end
+
+function ai_update()
+    for oi, oa in ipairs(next_action_list) do
+        local x = oa.x
+        local y = oa.y
+        local p = board.state[x+1][y+1]
+        
+        if get_cell_team(x, y) == 'enemy' and get_cell_cooldown(x, y) <= 0 then
+            if get_cell_cooldown(x, y) <= -1 then
+                local target_x = x
+                local target_y = y
+                local max_move_score = 0.0
+                
+                for other_x=-1,board.tiles_x-1 do
+                    for other_y=-1,board.tiles_y-1 do
+                        if is_move_allowed(x, y, other_x, other_y) or is_attack_allowed(x, y, other_x, other_y) then
+                            local d_to_friendly = min_distance_to_friendly(other_x, other_y)
+                            local local_score = 1.0 / (1.0 + d_to_friendly)
+
+                            if is_attack_allowed(x, y, other_x, other_y) then
+                                local_score = local_score + compute_damage(other_x, other_y, p, get_cell_atk(x, y))
+                            end
+
+                            if local_score > max_move_score then
+                                target_x = other_x
+                                target_y = other_y
+                                max_move_score = local_score
+                            end
+                        end
+                    end
+                end
+
+                action(x, y, target_x, target_y)
+            end
+        end
     end
 end
 
@@ -395,7 +448,7 @@ function draw_next_action_list()
         end
         local base_x = 30 + (i - 1) * board.tile_size
         local base_y = 184
-        draw_unit_background(base_x, base_y, shade, shade, p.cooldown / p.last_cooldown, p)
+        draw_unit_background(base_x, base_y, shade, shade, math.max(0, p.cooldown) / p.last_cooldown, p)
         set_color_white(4)
         draw_unit(base_x, base_y, p)
     end
@@ -494,6 +547,7 @@ end
 
 -- Update logic
 function game_update()
+    ai_update()
     update_next_action_list()
 end
 
@@ -680,6 +734,8 @@ end
 -- ============================================================================
 
 function reset_state(n)
+    current_chapter = n
+
     pieces = {}
 
     board = {
@@ -720,6 +776,7 @@ function reset_state(n)
     start_board = false
 
     next_action_list = {}
+    dialogue_state = ''
 
     load_scene(n .. ".lua")
     load_dialogues(n .. "_dialogues.lua")
