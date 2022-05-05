@@ -241,7 +241,8 @@ Chip: A Chunky Mushroom is heavy and chunky mushroom
 Panda appear.
 Chip: uh. Speak of the devil. 
       Look at who is here? I am leaving this place now.]],
-        character_top = "panda",
+        character_top = "teacup",
+        character_center = "panda",
         character_bottom = "nano",
         choice = {
             {
@@ -324,12 +325,14 @@ Panda: I have to get going.
 The Mushroom Forest is quiet.
 You sit down and try to reflect on what has happened thus far.
 You feel the strage atmosphere approaching.{}]],
+    character_bottom = "nano",
         choice = {
         },
         auto_progress = 'summon'
     },
     summon = {
         message = "You have been summoned{{",
+            character_center = "boss",
         choice = {},
         bright_background = true,
         auto_progress = 'start'

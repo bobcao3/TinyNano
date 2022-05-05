@@ -11,6 +11,7 @@ local dialogues = {
     },
     a = {
         message = "You look around the surrounding...",
+            character_bottom = "nano",
         choice = {
             {
                 target = 'b',
@@ -21,8 +22,10 @@ local dialogues = {
     },
     b = {
         message = [[
-Nano: These flowers reminded me of the mushroom pieces from the battle. 
+Nano: These flowers reminded me of the mushroom pieces
+     from the battle. 
     I should probably keep it.]],
+    character_bottom = "nano",
         choice = {
             {
                 target = 'c',
@@ -52,6 +55,7 @@ Nano: These flowers reminded me of the mushroom pieces from the battle.
     },
     c = {
         message = "You notice the castle in the back.",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'd',
@@ -63,6 +67,7 @@ Nano: This must be the mysterious castle Chip mentioned.
     },
     d = {
         message = "You see someone familiar.",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'e',
@@ -72,6 +77,8 @@ Nano: This must be the mysterious castle Chip mentioned.
     },
     e = {
         message = "Panda: I am here to help you escape.",
+            character_top = "panda",
+            character_bottom = "nano",
         choice = {
             {
                 target = 'f',
@@ -108,7 +115,8 @@ Nano: How do I know if you are not trying to
     },
     g = {
         message = [[
-Panda: After all, this is its home. After what happened to their family, 
+Panda: After all, this is its home. 
+    After what happened to their family, 
     Nightshade could never let go and become the way it is now...
         ]],
         choice = {
@@ -120,7 +128,8 @@ Panda: After all, this is its home. After what happened to their family,
     },
     h = {
         message = [[
-Panda: That is is a long story. Chip did not know about the truth… 
+Panda: That is is a long story. 
+    Chip did not know about the truth… 
     Nano, you have to trust me. 
         ]],
         choice = {
@@ -133,7 +142,8 @@ Panda: That is is a long story. Chip did not know about the truth…
     i = {
         message = [[
 Nightshade appeared
-Nightshade: Look at who is here? Nano is still looking as lost as ever.
+Nightshade: Look at who is here? 
+    Nano is still looking as lost as ever.
         ]],
         choice = {
             {
@@ -153,6 +163,7 @@ Nightshade: Nano, you think I will let you go?
     },
     summon = {
         message = "You have been summoned to battle{{",
+            character_center = "boss",
         choice = {},
         bright_background = true,
         auto_progress = 'start'

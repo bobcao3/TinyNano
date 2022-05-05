@@ -405,6 +405,13 @@ function draw_board()
                 if is_move_allowed(pickedup.coord.x, pickedup.coord.y, i - 1, j - 1) then
                     draw_unit_background(base_x, base_y, 4, shade, 1, p)
                 end
+            elseif not is_cell_empty(i - 1, j - 1) then
+                local p = board.state[i][j]
+                if get_cell_cooldown(i - 1, j - 1) <= 0 then
+                    if math.cos(get_cell_cooldown(i - 1, j - 1) * 12.0) > 0.0 then
+                        draw_unit_background(base_x, base_y, 4, shade, 1, p)
+                    end
+                end
             end
         end
     end
@@ -463,11 +470,21 @@ function draw_board_cursor()
     else
         set_color_blue(3)
     end
-    love.graphics.rectangle(
-        'line',
-        board.base_x + cursor.selected.x * board.tile_size,
-        board.base_y + cursor.selected.y * board.tile_size,
-        board.tile_size, board.tile_size)
+    -- love.graphics.rectangle(
+    --     'line',
+    --     board.base_x + cursor.selected.x * board.tile_size,
+    --     board.base_y + cursor.selected.y * board.tile_size,
+    --     board.tile_size, board.tile_size)
+    local x = board.base_x + cursor.selected.x * board.tile_size
+    local y = board.base_y + cursor.selected.y * board.tile_size
+    love.graphics.line(x - 1, y - 1, x + 3, y - 1)
+    love.graphics.line(x - 1, y - 1, x - 1, y + 3)
+    love.graphics.line(x + board.tile_size + 1, y - 1, x + board.tile_size - 3, y - 1)
+    love.graphics.line(x + board.tile_size + 1, y - 1, x + board.tile_size + 1, y + 3)
+    love.graphics.line(x - 1, y + board.tile_size + 1, x + 3, y + board.tile_size + 1)
+    love.graphics.line(x - 1, y + board.tile_size + 1, x - 1, y + board.tile_size - 3)
+    love.graphics.line(x + board.tile_size + 1, y + board.tile_size + 1, x + board.tile_size - 3, y + board.tile_size + 1)
+    love.graphics.line(x + board.tile_size + 1, y + board.tile_size + 1, x + board.tile_size + 1, y + board.tile_size - 3)
 end
 
 -- Draw
@@ -794,6 +811,8 @@ function load_scene(theme_file)
 
     boss = love.graphics.newImage('Art/Boss.png')
     boss_with_face = love.graphics.newImage('Art/bossface.png')
+
+    ready = love.graphics.newImage('ready.png')
 
     pieces = loaded.pieces
     friendly_sprite = love.graphics.newQuad(16, 0, 16, 16, 32, 16)

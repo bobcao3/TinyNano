@@ -5,7 +5,8 @@ local dialogues = {
         message = [[
 There is darkness, and something feels off about this body.
 The atmosphere is so tense. 
-A strong presence appeared, and everything seemed off about this character.    
+A strong presence appeared, 
+and everything seemed off about this character.    
         ]],
         choice = {
         },
@@ -14,6 +15,8 @@ A strong presence appeared, and everything seemed off about this character.
     },
     a = {
         message = "Nightshade: Welcome to my world, Nano.",
+            character_top = "boss",
+            character_bottom = "nano",
         choice = {
             {
                 target = 'b',
@@ -24,6 +27,8 @@ A strong presence appeared, and everything seemed off about this character.
     },
     b = {
         message = "Nightshade:I shall not let you escape this time.",
+            character_top = "boss",
+            character_bottom = "nano",
         choice = {
             {
                 target = 'c',
@@ -42,8 +47,10 @@ A strong presence appeared, and everything seemed off about this character.
     c = {
         message = [[
 Nightshade: Be careful to choose your responses wisely, 
-            or you shall face the consequences. 
+    or you shall face the consequences. 
         ]],
+            character_top = "boss",
+            character_bottom = "nano",
         choice = {
             {
                 target = 'd',
@@ -62,7 +69,9 @@ Nightshade: Be careful to choose your responses wisely,
     d = {
         message = [[
 Nightshade: In this world, I make the rules.
-            Nano, entertain me. Show me what you got.]],
+    Nano, entertain me. Show me what you got.]],
+            character_top = "boss",
+            character_bottom = "nano",
         choice = {
             {
                 target = 'e',
@@ -70,19 +79,22 @@ Nightshade: In this world, I make the rules.
             },
             {
                 target = 'e',
-                text = "Nano: Wait, I recognize the weird shpaes behind you."
+                text = "Nano: Bring it on!"
             },
             {
                 target = 'e',
-                text = "Nano: Bring it on!"
+                text = "Nano: Wait, I recognize the weird shpaes behind you."
             }
         }
     },
     e = {
         message = [[
 Nightshade: Here, take this piece and place it on the board.
-            Look at you being so lost. 
-            I will give you a hint that each piece has a different ability.]],
+     Look at you being so lost. 
+    I will give you a hint that each piece 
+    has a different ability.]],
+            character_top = "boss",
+            character_bottom = "nano",
         choice = {
             {
                 target = 'f',
@@ -91,20 +103,28 @@ Nightshade: Here, take this piece and place it on the board.
         }
     },
     f = {
-        message = "Nightshade: I hope you would not disappoint me and end the fun so fast.",
+        message = [[
+Nightshade: I hope you would not disappoint me 
+    and end the fun so fast.]],
+        character_top = "boss",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'g',
-                text = "Nano: Wait, how do I know about their abilities? "
+                text = "Nano: How do I know about their abilities? "
             }
         }
     },
     g = {
-        message = "Nightshade: You can manage the pieces by looking at the botton right dashboard.",
+        message = [[
+Nightshade: You can manage the pieces 
+    by looking at the botton right dashboard.]],
+        character_top = "boss",
+        character_bottom = "nano",
         choice = {
             {
                 target = 'advance',
-                text = "Nano: Ok! I can do this!"
+                text = "Nano: I am ready to battle and get out of this place!"
             }
         }
     },
@@ -112,12 +132,15 @@ Nightshade: Here, take this piece and place it on the board.
         message = [[
 Nightshade: Now, let the show begin. 
 You feel the strage atmosphere approaching.{}]],
+    character_top = "boss",
+    character_bottom = "nano",
         choice = {
         },
         auto_progress = 'summon'
     },
     summon = {
         message = "You have been summoned{{",
+            character_center = "boss",
         choice = {},
         bright_background = true,
         auto_progress = 'start'
