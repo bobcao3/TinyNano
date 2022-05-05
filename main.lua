@@ -878,7 +878,7 @@ function love.load()
     canvas_dialog = love.graphics.newCanvas(res_x, res_y)
     canvas_dialog:setFilter("nearest", "nearest")
 
-    reset_state("scene2")
+    reset_state("scene0")
 end
 
 -- ============================================================================
