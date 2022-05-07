@@ -28,6 +28,7 @@ local scene = {
             def = 3,
             atk_cd = 7.5,
             move_cd = 5.5,
+            healing = 0,
             allowed_moves = {
                 { x = -2, y = 0 },
                 { x = -1, y = 0 },
@@ -44,6 +45,10 @@ local scene = {
                 { x = 1, y = 0 },
                 { x = 0, y = -1 },
                 { x = 0, y = 1 },
+            },
+            bonus = {
+                { target = 'archer', multiplier = 2.0 },
+                { target = 'healer', multiplier = 2.0 }
             }
         },
         archer = {
@@ -57,6 +62,7 @@ local scene = {
             def = 0,
             atk_cd = 4.0,
             move_cd = 4.0,
+            healing = 0,
             allowed_moves = {
                 { x = -1, y = 0 },
                 { x = 1, y = 0 },
@@ -89,6 +95,7 @@ local scene = {
             def = 0,
             atk_cd = 5.5,
             move_cd = 3.5,
+            healing = 0,
             allowed_moves = {
                 { x = -1, y = 0 },
                 { x = 1, y = 0 },
@@ -117,6 +124,7 @@ local scene = {
             def = 1,
             atk_cd = 5.5,
             move_cd = 3.0,
+            healing = 15,
             allowed_moves = {
                 { x = -1, y = 0 },
                 { x = 1, y = 0 },
@@ -125,7 +133,11 @@ local scene = {
                 { x = 0, y = 1 },
             },
             allowed_attacks = {
-            }
+                { x = -1, y = 0 },
+                { x = 1, y = 0 },
+                { x = 0, y = -1 },
+                { x = 0, y = 1 },
+            },
         }
     },
     initial_pieces = {
@@ -135,6 +147,7 @@ local scene = {
             { type = "pointy", x = 7, y = 2 },
         },
         friendly = {
+            { type = "knight", x = 5, y = 5 }
         }
     }
 }

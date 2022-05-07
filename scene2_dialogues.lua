@@ -132,13 +132,13 @@ Panda: After all, this is its home.
     h = {
         message = [[
 Panda: That is is a long story. 
-    Chip did not know about the truth… 
+    Chip did not know about the truth...
     Nano, you have to trust me. 
         ]],
         choice = {
             {
                 target = 'i',
-                text = "Nano: I am so confused."
+                text = "Nano: I'm so confused."
             }
         }
     },

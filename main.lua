@@ -1,6 +1,16 @@
 -- local console_toggle = require("love2d-console.console.console")
 
-current_chapter = 'scene0'
+current_chapter = 'title'
+next_chapter = 'scene1'
+
+screen_brightness = 1.0
+fade_in = false
+
+win_animation = false
+win_animation_t = 0.0
+
+lose_animation = false
+lose_animation_t = 0.0
 
 function love.textinput(text)
     -- console_toggle(text)
@@ -102,18 +112,22 @@ function update_next_action_list()
     end
     table.sort(list, function (k1, k2) return k1.cooldown < k2.cooldown end)
     next_action_list = list
-    
-    if friendly == 0 then
-        -- Died
-        reset_state(current_chapter)
-    elseif enemy == 0 then
+
+    if enemy == 0 then
         if current_chapter == 'scene0' then
-            reset_state('scene1')
+            next_chapter = 'scene1'
+            win_animation = true
         elseif current_chapter == 'scene1' then
-            reset_state('scene2')
+            next_chapter = 'scene2'
+            win_animation = true
         elseif current_chapter == 'scene2' then
-            reset_state('win')
+            next_chapter = 'win'
+            win_animation = true
         end
+    elseif friendly == 0 then
+        -- Died
+        lose_animation = true
+        next_chapter = current_chapter
     end
 end
 
@@ -132,6 +146,10 @@ end
 
 function get_cell_atk(i, j)
     return pieces[get_cell_type(i, j)].atk
+end
+
+function get_cell_aura(i, j)
+    return pieces[get_cell_type(i, j)].healing
 end
 
 function kill_cell(i, j)
@@ -158,6 +176,15 @@ function compute_damage(i, j, pawn, dmg)
     return dmg_comp
 end
 
+function aura_cell(i, j, pawn, aura)
+    local hp = get_cell_hp(i, j)
+    hp = hp + aura
+    if hp >= pieces[get_cell_type(i, j)].max_hp then
+        hp = pieces[get_cell_type(i, j)].max_hp
+    end
+    board.state[i + 1][j + 1].hp = hp
+end
+
 function attack_cell(i, j, pawn, dmg)
     local hp = get_cell_hp(i, j)
     hp = hp - compute_damage(i, j, pawn, dmg)
@@ -174,7 +201,7 @@ function min_distance_to_friendly(x, y)
         local other_x = oa.x
         local other_y = oa.y
         if get_cell_team(other_x, other_y) ~= 'enemy' then
-            min_d = math.min(min_d, math.abs(other_x - x) + math.abs(other_y - y))
+            min_d = math.sqrt((other_x - x) * (other_x - x) + (other_y - y) * (other_y - y))
         end
     end
     return min_d
@@ -196,7 +223,7 @@ function ai_update()
                     for other_y=-1,board.tiles_y-1 do
                         if is_move_allowed(x, y, other_x, other_y) or is_attack_allowed(x, y, other_x, other_y) then
                             local d_to_friendly = min_distance_to_friendly(other_x, other_y)
-                            local local_score = 1.0 / (1.0 + d_to_friendly)
+                            local local_score = 100 - d_to_friendly
 
                             if is_attack_allowed(x, y, other_x, other_y) then
                                 local_score = local_score + compute_damage(other_x, other_y, p, get_cell_atk(x, y))
@@ -297,10 +324,37 @@ function is_attack_allowed(from_x, from_y, to_x, to_y)
     return false
 end
 
+function is_aura_allowed(from_x, from_y, to_x, to_y)
+    if is_cell_empty(to_x, to_y) then
+        return false
+    end
+    if get_cell_aura(from_x, from_y) == 0.0 then
+        return false
+    end
+    if get_cell_team(from_x, from_y) ~= get_cell_team(to_x, to_y) then
+        return false
+    end
+    local off_x = to_x - from_x
+    local off_y = to_y - from_y
+    local type = get_cell_type(from_x, from_y)
+    for i, m in ipairs(pieces[type].allowed_attacks) do
+        if off_x == m.x and off_y == m.y then
+            return true
+        end
+    end
+    return false
+end
+
 function action(from_x, from_y, to_x, to_y)
     if not is_cell_empty(from_x, from_y) then
         local pawn = board.state[from_x + 1][from_y + 1]
-        if is_attack_allowed(from_x, from_y, to_x, to_y) then
+        if is_aura_allowed(from_x, from_y, to_x, to_y) then
+            -- Attack
+            aura_cell(to_x, to_y, pawn, get_cell_aura(from_x, from_y))
+            board.state[from_x + 1][from_y + 1].cooldown = pieces[pawn.type].atk_cd
+            board.state[from_x + 1][from_y + 1].last_cooldown = pieces[pawn.type].atk_cd
+            return true
+        elseif is_attack_allowed(from_x, from_y, to_x, to_y) then
             -- Attack
             attack_cell(to_x, to_y, pawn, get_cell_atk(from_x, from_y))
             board.state[from_x + 1][from_y + 1].cooldown = pieces[pawn.type].atk_cd
@@ -428,6 +482,9 @@ function draw_board()
                 if is_attack_allowed(pickedup.coord.x, pickedup.coord.y, i - 1, j - 1) then
                     love.graphics.draw(attack_arrow, base_x, base_y)
                 end
+                if is_aura_allowed(pickedup.coord.x, pickedup.coord.y, i - 1, j - 1) then
+                    love.graphics.draw(heal_arrow, base_x, base_y)
+                end
             end
         end
     end
@@ -489,9 +546,19 @@ end
 
 -- Draw
 function draw_boss()
-    set_color_white(4)
-    local wobble = math.floor(math.sin(love.timer.getTime() * 3.14 + 7) * 6 + 0.5)
-    love.graphics.draw(boss_with_face, 205, 5 + wobble)
+    if win_animation then
+        if math.sin(win_animation_t * 15.0) >= 0.0 then
+            set_color_red(4)
+        else
+            set_color_red(2)
+        end
+        local wobble = math.floor(math.sin(love.timer.getTime() * 13.0 + 7) * 6 + 0.5)
+        love.graphics.draw(boss_with_face, 205 + wobble, 5)
+    else
+        set_color_white(4)
+        local wobble = math.floor(math.sin(love.timer.getTime() * 3.14 + 7) * 6 + 0.5)
+        love.graphics.draw(boss_with_face, 205, 5 + wobble)    
+    end
 end
 
 function draw_unit_details()
@@ -566,6 +633,26 @@ end
 function game_update()
     ai_update()
     update_next_action_list()
+
+    if win_animation then
+        win_animation_t = win_animation_t + love.timer.getDelta()
+        if win_animation_t > 2.0 then
+            win_animation = false
+            win_animation_t = 0.0
+            reset_state(next_chapter)
+        end
+    end
+
+    if lose_animation then
+        lose_animation_t = lose_animation_t + love.timer.getDelta()
+        screen_brightness = math.sin(lose_animation_t * 13.0)
+        if lose_animation_t > 4.0 then
+            lose_animation = false
+            lose_animation_t = 0.0
+            screen_brightness = 0.0
+            reset_state(next_chapter)
+        end
+    end
 end
 
 -- Draw dialogue scene
@@ -596,7 +683,7 @@ function draw_dialogs()
         local wobble = math.floor(math.sin(love.timer.getTime() * 8.1 + 7) * 3 + 0.5)
         local c = characters[character_top]
         love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(c, 5, 5 + wobble)
+        love.graphics.draw(c, 5, math.floor(5 + wobble))
     end
 
     local character_center = dialogues[dialogue_state].character_center
@@ -604,7 +691,7 @@ function draw_dialogs()
         local wobble = math.floor(math.sin(love.timer.getTime() * 7.93 + 3) * 3 + 0.5)
         local c = characters[character_center]
         love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(c, (canvas:getWidth() - c:getWidth()) / 2,  (canvas:getHeight() - c:getHeight()) / 2 + wobble)
+        love.graphics.draw(c, math.floor((canvas:getWidth() - c:getWidth()) / 2), math.floor((canvas:getHeight() - c:getHeight()) / 2 + wobble))
     end
 
     local character_center_left = dialogues[dialogue_state].character_center_left
@@ -612,7 +699,7 @@ function draw_dialogs()
         local wobble = math.floor(math.sin(love.timer.getTime() * 7.93 + 3) * 3 + 0.5)
         local c = characters[character_center_left]
         love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(c, (canvas:getWidth() / 2 - c:getWidth()) / 2,  (canvas:getHeight() - c:getHeight()) / 2 + wobble)
+        love.graphics.draw(c, math.floor((canvas:getWidth() / 2 - c:getWidth()) / 2), math.floor((canvas:getHeight() - c:getHeight()) / 2 + wobble))
     end
 
     local character_center_right = dialogues[dialogue_state].character_center_right
@@ -620,7 +707,7 @@ function draw_dialogs()
         local wobble = math.floor(math.sin(love.timer.getTime() * 7.93 + 3) * 3 + 0.5)
         local c = characters[character_center_right]
         love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(c, canvas:getWidth() / 2 + (canvas:getWidth() / 2 - c:getWidth()) / 2,  (canvas:getHeight() - c:getHeight()) / 2 + wobble)
+        love.graphics.draw(c, math.floor(canvas:getWidth() / 2 + (canvas:getWidth() / 2 - c:getWidth()) / 2),  math.floor((canvas:getHeight() - c:getHeight()) / 2 + wobble))
     end
 
     local character_bottom = dialogues[dialogue_state].character_bottom
@@ -628,7 +715,7 @@ function draw_dialogs()
         local wobble = math.floor(math.sin(love.timer.getTime() * 8.3 - 2) * 3 + 0.5)
         local c = characters[character_bottom]
         love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(c, canvas:getWidth() - c:getWidth() - 5,  canvas:getHeight() - c:getHeight() - 5 + wobble)
+        love.graphics.draw(c, math.floor(canvas:getWidth() - c:getWidth() - 5),  math.floor(canvas:getHeight() - c:getHeight() - 5 + wobble))
     end
 
     -- Draw dialogue message
@@ -638,7 +725,7 @@ function draw_dialogs()
         local st = ""
         local tt = 0
         local speed = 40.0
-        for idx = 1, #dialogues[dialogue_state].text_str do
+        for idx = 0, #dialogues[dialogue_state].text_str do
             local c = string.sub(dialogues[dialogue_state].text_str, idx, idx)
             if c == '{' then
                 tt = tt + speed
@@ -699,6 +786,15 @@ end
 -- Mouse interaction of dialogues
 
 function dialog_update()
+    if fade_in then
+        screen_brightness = screen_brightness + love.timer.getDelta()
+        if screen_brightness >= 1.0 then
+            screen_brightness = 1.0
+            fade_in = false
+        end
+        return
+    end
+
     dialogues[dialogue_state].animation_state = dialogues[dialogue_state].animation_state + love.timer.getDelta()
 
     local total_height = 0
@@ -734,6 +830,10 @@ function dialog_update()
 
 end
 
+function string.starts(String,Start)
+    return string.sub(String,1,string.len(Start))==Start
+ end 
+
 function dialog_mousepressed(x, y, button)
     if dialogues[dialogue_state].presented then
         local total_height = 0
@@ -754,6 +854,9 @@ function dialog_mousepressed(x, y, button)
                 if c.trigger then
                     c.trigger(board)
                 end
+                if string.starts(c.target, "scene_") then
+                    reset_state(string.sub(c.target, 7, string.len(c.target)))
+                end
                 return
             end
     
@@ -767,6 +870,15 @@ end
 -- ============================================================================
 
 function reset_state(n)
+    screen_brightness = 0.0
+    fade_in = true
+
+    win_animation = false
+    win_animation_t = 0.0
+
+    lose_animation = false
+    lose_animation_t = 0.0
+
     current_chapter = n
 
     pieces = {}
@@ -871,6 +983,7 @@ function love.load()
     font = love.graphics.newFont("font10.fnt")
 
     attack_arrow = love.graphics.newImage("attack_arrow.png")
+    heal_arrow = love.graphics.newImage("heal.png")
 
     canvas = love.graphics.newCanvas(res_x, res_y)
     canvas:setFilter("nearest", "nearest")
@@ -878,7 +991,7 @@ function love.load()
     canvas_dialog = love.graphics.newCanvas(res_x, res_y)
     canvas_dialog:setFilter("nearest", "nearest")
 
-    reset_state("scene0")
+    reset_state(current_chapter)
 end
 
 -- ============================================================================
@@ -918,7 +1031,7 @@ function love.draw()
     draw_dialogs()
 
     love.graphics.setCanvas()
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(screen_brightness, screen_brightness, screen_brightness, 1)
     love.graphics.draw(canvas_dialog, (-transition) * love.graphics.getWidth(), 0, 0, pixel_scale, pixel_scale)
     love.graphics.draw(canvas, (1.0 - transition) * love.graphics.getWidth(), 0, 0, pixel_scale, pixel_scale)
     draw_cursor()

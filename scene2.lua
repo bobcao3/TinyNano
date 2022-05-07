@@ -18,7 +18,7 @@ local scene = {
     },
     pieces = {
         knight = {
-            image = "strong_mushroom.png",
+            image = "l2tank.png",
             portrait_img = "Art/Pieces/Level2Garden/L2-KnightGreen.png",
             portrait_img_enemy = "Art/Pieces/Level2Garden/L2-KnightRed.png",
             name = "Chunky",
@@ -28,6 +28,7 @@ local scene = {
             def = 3,
             atk_cd = 7.5,
             move_cd = 5.5,
+            healing = 0,
             allowed_moves = {
                 { x = -2, y = 0 },
                 { x = -1, y = 0 },
@@ -44,10 +45,14 @@ local scene = {
                 { x = 1, y = 0 },
                 { x = 0, y = -1 },
                 { x = 0, y = 1 },
+            },
+            bonus = {
+                { target = 'archer', multiplier = 2.0 },
+                { target = 'healer', multiplier = 2.0 }
             }
         },
         archer = {
-            image = "archer_mushroom.png",
+            image = "l2archer.png",
             portrait_img = "Art/Pieces/Level2Garden/L2-ArcherGreen.png",
             portrait_img_enemy = "Art/Pieces/Level2Garden/L2-ArcherRed.png",
             name = "Poison",
@@ -57,6 +62,7 @@ local scene = {
             def = 0,
             atk_cd = 4.0,
             move_cd = 4.0,
+            healing = 0,
             allowed_moves = {
                 { x = -1, y = 0 },
                 { x = 1, y = 0 },
@@ -79,7 +85,7 @@ local scene = {
             }
         },
         pointy = {
-            image = "pointy_mushroom.png",
+            image = "l2spear.png",
             portrait_img = "Art/Pieces/Level2Garden/L2-SpearGreen.png",
             portrait_img_enemy = "Art/Pieces/Level2Garden/L2-SpearRed.png",
             name = "Sharp",
@@ -89,6 +95,7 @@ local scene = {
             def = 0,
             atk_cd = 5.5,
             move_cd = 3.5,
+            healing = 0,
             allowed_moves = {
                 { x = -1, y = 0 },
                 { x = 1, y = 0 },
@@ -107,7 +114,7 @@ local scene = {
             }
         },
         healer = {
-            image = "healer_mushroom.png",
+            image = "l2heal.png",
             portrait_img = "Art/Pieces/Level2Garden/L2-HealerGreen.png",
             portrait_img_enemy = "Art/Pieces/Level2Garden/L2-HealerRed.png",
             name = "Fine",
@@ -117,6 +124,7 @@ local scene = {
             def = 1,
             atk_cd = 5.5,
             move_cd = 3.0,
+            healing = 15,
             allowed_moves = {
                 { x = -1, y = 0 },
                 { x = 1, y = 0 },
@@ -125,6 +133,10 @@ local scene = {
                 { x = 0, y = 1 },
             },
             allowed_attacks = {
+                { x = -1, y = 0 },
+                { x = 1, y = 0 },
+                { x = 0, y = -1 },
+                { x = 0, y = 1 },
             }
         }
     },
@@ -135,6 +147,7 @@ local scene = {
             { type = "pointy", x = 7, y = 2 },
         },
         friendly = {
+            { type = "knight", x = 5, y = 5 }
         }
     }
 }

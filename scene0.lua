@@ -27,6 +27,7 @@ local scene = {
             def = 0,
             atk_cd = 4.0,
             move_cd = 4.0,
+            healing = 0,
             allowed_moves = {
                 { x = -1, y = 0 },
                 { x = 1, y = 0 },
@@ -55,6 +56,7 @@ local scene = {
             def = 0,
             atk_cd = 4.0,
             move_cd = 4.0,
+            healing = 0,
             allowed_moves = {
                 { x = -1, y = 0 },
                 { x = 1, y = 0 },
@@ -83,6 +85,7 @@ local scene = {
             def = 0,
             atk_cd = 4.0,
             move_cd = 4.0,
+            healing = 0,
             allowed_moves = {
                 { x = -1, y = 0 },
                 { x = 1, y = 0 },
